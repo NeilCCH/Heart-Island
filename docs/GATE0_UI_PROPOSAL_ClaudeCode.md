@@ -1,6 +1,6 @@
 # 小貓能量站｜Gate 0 UI/UX 提案（Claude Code）
 - 日期：2026-10-22
-- 狀態：**Gate 0 只讀分析成果；未寫程式、未安裝、未建立分支、未提交**。不是 Gate 2 授權。
+- 狀態：Gate 0 分析成果。使用者 2026-10-22 指示「全部照建議」，裁決記錄於 DECISIONS.md（U1–U6、D01–D08）。**仍不是 Gate 2 授權**。
 - 依據：PRD v1.2（唯一規格）、WORKFLOW v1.2、Gate 0 交接包 v0.2（CORE_API_CONTRACT v0.2、DECISIONS、IMPLEMENTATION_PLAN、ACCEPTANCE）。MANIFEST.sha256 九個檔案全數校驗通過；交接包內 PRD/WORKFLOW 與單獨上傳版本逐字相同。
 
 ---
