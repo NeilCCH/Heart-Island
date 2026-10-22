@@ -1,0 +1,149 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { EnergyEffect, EnergyRuntimeDependencies, Mode } from '../core/types';
+import { useEnergySession } from '../core/useEnergySession';
+import { useEnergySettings } from '../settings/useEnergySettings';
+import { useCuePlayer } from './audio/useCuePlayer';
+import { copy } from './copy';
+import { useEffectiveReducedMotion } from './hooks/useEffectiveReducedMotion';
+import { useThemeAttribute } from './hooks/useThemeAttribute';
+import { useWakeLock } from './hooks/useWakeLock';
+import { EnergyHome } from './screens/EnergyHome';
+import { GuidedSet } from './screens/GuidedSet';
+import { RestScreen } from './screens/RestScreen';
+import { SetComplete } from './screens/SetComplete';
+import { SettingsSheet } from './screens/SettingsSheet';
+import './styles/energy.css';
+
+type Screen = 'home' | 'guide' | 'complete' | 'rest';
+const SCREEN_OF: Record<Mode, Screen> = {
+  idle: 'home', guiding: 'guide', pausedGuiding: 'guide', setComplete: 'complete',
+  resting: 'rest', pausedRest: 'rest', readyNext: 'rest',
+};
+// 這些模式下一律停止音訊（README 核心接線說明）。
+const SILENT_MODES: readonly Mode[] = ['idle', 'pausedGuiding', 'pausedRest', 'setComplete'];
+
+function isInteractive(target: EventTarget | null) {
+  return target instanceof HTMLElement && !!target.closest('button, input, select, textarea, a, [role="dialog"]');
+}
+
+// 功能根元件：唯一掛載 useEnergySession 的地方，切換畫面或開啟設定都不會卸載。
+// 時間與計數只讀核心；UI 不自建計時器或計數器。
+export function EnergyStation({ runtime }: { runtime?: EnergyRuntimeDependencies }) {
+  const preferences = useEnergySettings();
+  const { settings, update } = preferences;
+  const motion = useEffectiveReducedMotion(settings.reducedMotion);
+  // 傳給核心的是有效低動態；只在相關值變化時產生新引用。
+  const coreSettings = useMemo(() => ({ ...settings, reducedMotion: motion.effective }), [settings, motion.effective]);
+  const audio = useCuePlayer(settings.soundEnabled, settings.volume);
+  const [announcement, setAnnouncement] = useState({ text: '', count: 0 });
+  // 每次播報遞增 count；交替附加零寬字元，讓相同句子也會被重新播報。
+  const announce = useCallback((text: string) => setAnnouncement(previous => ({ text, count: previous.count + 1 })), []);
+
+  const onEffects = useCallback((effects: readonly EnergyEffect[]) => {
+    const parts: string[] = [];
+    let completed: string | null = null;
+    for (const effect of effects) {
+      switch (effect.type) {
+        case 'phaseChanged': audio.play(effect.phase === 'exhaleLift' ? 'exhale' : 'inhale'); parts.push(copy.phaseShort[effect.phase]); break;
+        case 'cycleCompleted': parts.push(copy.guided(effect.guidedCycles)); break;
+        case 'setCompleted': audio.cancel(); completed = copy.announce.setComplete(effect.guidedCycles); break;
+        case 'guidancePaused': audio.cancel(); parts.push(copy.announce.paused); break;
+        case 'restFinished': audio.play('restFinished'); parts.push(copy.announce.restFinished); break;
+      }
+    }
+    const text = completed ?? parts.join('，');
+    if (text) announce(text);
+  }, [audio, announce]);
+
+  const energy = useEnergySession(coreSettings, { onEffects, dependencies: runtime });
+  const { session, guide, rest, actions } = energy;
+  const screen = SCREEN_OF[session.mode];
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
+  useThemeAttribute(settings.theme, motion.effective);
+  const wakeLock = useWakeLock(session.mode === 'guiding' || session.mode === 'resting');
+
+  useEffect(() => { if (SILENT_MODES.includes(session.mode)) audio.cancel(); }, [session.mode, audio]);
+  useEffect(() => {
+    const onVisibility = () => { if (document.hidden) audio.cancel(); };
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => document.removeEventListener('visibilitychange', onVisibility);
+  }, [audio]);
+
+  // 換畫面時把焦點移到新畫面的標題；第一次載入不搶焦點。
+  const mainRef = useRef<HTMLDivElement>(null);
+  const firstScreen = useRef(true);
+  useEffect(() => {
+    if (firstScreen.current) { firstScreen.current = false; return; }
+    mainRef.current?.querySelector<HTMLElement>('[data-screen-heading]')?.focus();
+  }, [screen]);
+
+  // 需要使用者手勢的操作：若已開啟聲音，順便授權音訊。
+  const withAudio = useCallback((action: () => void) => () => {
+    if (settings.soundEnabled) audio.unlock();
+    action();
+  }, [settings.soundEnabled, audio]);
+
+  // 空白鍵：暫停／繼續（焦點不在按鈕或輸入元件時）。
+  useEffect(() => {
+    if (settingsOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.code !== 'Space' && event.key !== ' ') return;
+      if (event.repeat || isInteractive(event.target)) return;
+      const toggle: Partial<Record<Mode, () => void>> = {
+        guiding: actions.pause, pausedGuiding: withAudio(actions.resume),
+        resting: actions.pauseRest, pausedRest: withAudio(actions.resumeRest),
+      };
+      const run = toggle[session.mode];
+      if (!run) return;
+      event.preventDefault();
+      run();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [settingsOpen, session.mode, actions, withAudio]);
+
+  // 關閉設定後焦點回到開啟它的按鈕；若該畫面已切換，改回目前畫面的設定按鈕。
+  const openerRef = useRef<HTMLElement | null>(null);
+  const openSettings = useCallback(() => {
+    openerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setSettingsOpen(true);
+  }, []);
+  useEffect(() => {
+    if (settingsOpen || !openerRef.current) return;
+    const opener = openerRef.current;
+    openerRef.current = null;
+    const target = opener.isConnected ? opener : mainRef.current?.querySelector<HTMLElement>('[aria-haspopup="dialog"]');
+    target?.focus();
+  }, [settingsOpen]);
+  const common = { settings, update, onOpenSettings: openSettings };
+
+  return (
+    <div className="energy">
+      <div ref={mainRef} className="energy__main" inert={settingsOpen}>
+        {screen === 'home' && <EnergyHome {...common} onStart={withAudio(actions.start)} />}
+        {screen === 'guide' && guide && (
+          <GuidedSet {...common} guide={guide} paused={session.mode === 'pausedGuiding'} wakeLockAvailable={wakeLock.available}
+            onPause={actions.pause} onResume={withAudio(actions.resume)} onFinish={actions.finishSet} onExit={actions.exit} />
+        )}
+        {screen === 'complete' && (
+          <SetComplete {...common} setIndex={session.setIndex} guidedCycles={session.guidedCycles}
+            onRest={withAudio(actions.startRest)} onNextSet={withAudio(actions.nextSet)} onExit={actions.exit} />
+        )}
+        {screen === 'rest' && rest && (
+          <RestScreen {...common} rest={rest} paused={session.mode === 'pausedRest'} pauseReason={session.pauseReason}
+            wakeLockAvailable={wakeLock.available}
+            onPause={actions.pauseRest} onResume={withAudio(actions.resumeRest)} onExtend={actions.extendRest} onSkip={actions.skipRest}
+            onRestAgain={withAudio(actions.startRest)} onNextSet={withAudio(actions.nextSet)} onExit={actions.exit} />
+        )}
+      </div>
+      <div className="sr-only" aria-live="polite" aria-atomic="true" data-testid="announcer">{announcement.text}{announcement.count % 2 ? '\u200B' : ''}</div>
+      {settingsOpen && (
+        <SettingsSheet settings={settings} update={update} remember={preferences.remember} setRemember={preferences.setRemember}
+          clearSaved={preferences.clearSaved} resetToDefaults={preferences.resetToDefaults} storageError={preferences.storageError}
+          systemReducedMotion={motion.system} onSoundGesture={audio.unlock} onTestSound={() => { audio.unlock(); audio.play('test'); }}
+          onClose={() => setSettingsOpen(false)} />
+      )}
+    </div>
+  );
+}
