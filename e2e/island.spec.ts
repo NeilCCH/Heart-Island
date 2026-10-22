@@ -48,3 +48,22 @@ test('手機寬度：首頁與新功能無水平捲動', async ({ page }) => {
     expect(overflow).toBeLessThanOrEqual(0);
   }
 });
+
+test('療癒小花園：手指畫沙紋會改變沙盤，種花與拖動石頭', async ({ page }) => {
+  await page.getByRole('link', { name: /療癒小花園/ }).click();
+  const tray = page.getByRole('img', { name: /沙盤/ });
+  const box = (await tray.boundingBox())!;
+  const pixel = () => page.evaluate(() => {
+    const c = document.querySelector('canvas')!; const d = c.getContext('2d')!.getImageData(200, 375, 1, 1).data; return [d[0], d[1], d[2]].join(',');
+  });
+  const before = await pixel();
+  await page.mouse.move(box.x + box.width * 0.1, box.y + box.height * 0.5);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width * 0.4, box.y + box.height * 0.5, { steps: 12 });
+  await page.mouse.up();
+  expect(await pixel()).not.toBe(before);
+  await page.getByRole('radio', { name: '種花' }).check();
+  await tray.click({ position: { x: box.width * 0.15, y: box.height * 0.8 } });
+  await expect(tray).toHaveAttribute('aria-label', /1 朵花/);
+  if (shotDir) await page.screenshot({ path: `${shotDir}/garden.png`, fullPage: true });
+});

@@ -34,10 +34,9 @@ describe('心靈小島首頁', () => {
   it('列出五個地方：已開放的可進入，準備中的不能點', () => {
     setup();
     expect(heading().textContent).toBe('心靈小島');
-    for (const name of ['呼吸小宇宙', '今天一點點', '小貓能量站']) expect(screen.getByRole('link', { name: new RegExp(name) })).toBeTruthy();
-    expect(screen.queryByRole('link', { name: /療癒小花園/ })).toBeNull();
+    for (const name of ['呼吸小宇宙', '今天一點點', '療癒小花園', '小貓能量站']) expect(screen.getByRole('link', { name: new RegExp(name) })).toBeTruthy();
     expect(screen.queryByRole('link', { name: /小貓陪伴屋/ })).toBeNull();
-    expect(screen.getAllByText('準備中')).toHaveLength(2);
+    expect(screen.getAllByText('準備中')).toHaveLength(1);
   });
 
   it('進入功能後焦點移到標題，「回小島」返回首頁', () => {

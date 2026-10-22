@@ -10,13 +10,14 @@ import { useThemeAttribute } from '../features/energy/ui/hooks/useThemeAttribute
 import { SettingsSheet } from '../features/energy/ui/screens/SettingsSheet';
 import { BreathScreen, clearBreathPrefs } from '../features/breath/BreathScreen';
 import { TinyScreen } from '../features/tiny/TinyScreen';
+import { GardenScreen } from '../features/garden/GardenScreen';
 import { IslandHome } from './IslandHome';
 import { useHashRoute, type Route } from './useHashRoute';
 import '../features/energy/ui/styles/energy.css';
 import './island.css';
 
-// 目前開放的地方；療癒小花園與小貓陪伴屋完成後再加入。
-const AVAILABLE: readonly Route[] = ['home', 'breath', 'tiny', 'energy'];
+// 目前開放的地方；小貓陪伴屋完成後再加入。
+const AVAILABLE: readonly Route[] = ['home', 'breath', 'tiny', 'garden', 'energy'];
 
 // 心靈小島根元件：一份共用偏好（聲音、音量、減少動態、主題、記住偏好），各功能共用。
 export function IslandApp({ runtime: injected }: { runtime?: EnergyRuntimeDependencies }) {
@@ -64,6 +65,7 @@ export function IslandApp({ runtime: injected }: { runtime?: EnergyRuntimeDepend
         <BackContext.Provider value={route === 'home' ? null : back}>
           {route === 'home' && <IslandHome available={AVAILABLE} onOpenSettings={openSettings} />}
           {route === 'tiny' && <TinyScreen onOpenSettings={openSettings} />}
+          {route === 'garden' && <GardenScreen onOpenSettings={openSettings} reducedMotion={motion.effective} />}
           {route === 'breath' && (
             <BreathScreen runtime={runtime} remember={preferences.remember} volume={settings.volume}
               reducedMotion={motion.effective} onOpenSettings={openSettings} />
