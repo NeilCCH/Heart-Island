@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, type FormEvent } from 'react';
 import { TopBar } from '../energy/ui/components/TopBar';
 import { ACTIVITIES, CATEGORY_NAME, type Activity } from './activities';
 import { tinyCopy as copy } from './copy';
@@ -22,14 +22,14 @@ export function TinyScreen({ onOpenSettings, random = Math.random }: { onOpenSet
   const [acknowledged, setAcknowledged] = useState(false);
   const [choosing, setChoosing] = useState(false);
   const [today, setToday] = useState<string[]>(() => loadToday());
+  const dayRef = useRef(localDate());
 
   // 畫面一直開著跨過午夜，或隔天回到前景時，重新讀取，讓「今天做過的」只顯示今天。
   useEffect(() => {
-    let day = localDate();
     const refresh = () => {
       if (document.hidden) return;
       const now = localDate();
-      if (now !== day) { day = now; setToday(loadToday(now)); }
+      if (now !== dayRef.current) { dayRef.current = now; setToday(loadToday(now)); }
     };
     const timer = window.setInterval(refresh, 60_000);
     document.addEventListener('visibilitychange', refresh);
@@ -45,9 +45,13 @@ export function TinyScreen({ onOpenSettings, random = Math.random }: { onOpenSet
   }
   const another = () => show(pick(pool, [current.id, ...recent], random));
 
+  // 以記憶體中的當天清單接續；保存失敗時畫面上的紀錄也不會遺失。日期變了才從空清單開始。
   function done() {
-    const next = loadToday().concat(current.text);
-    saveToday(next);
+    const now = localDate();
+    const base = now === dayRef.current ? today : [];
+    dayRef.current = now;
+    const next = [...base, current.text];
+    saveToday(next, now);
     setToday(next);
     setAcknowledged(true);
   }

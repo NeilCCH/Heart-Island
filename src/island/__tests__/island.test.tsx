@@ -103,6 +103,16 @@ describe('今天一點點', () => {
     vi.useRealTimers();
   });
 
+  it('本機無法保存時，連續做了兩件都還在今天的清單上', () => {
+    vi.stubGlobal('localStorage', { getItem: () => null, setItem: () => { throw new Error('QuotaExceeded'); }, removeItem: () => {}, clear: () => {}, length: 0 });
+    renderTiny();
+    act(() => { fireEvent.click(screen.getByRole('button', { name: tinyCopy.done })); });
+    act(() => { fireEvent.click(screen.getByRole('button', { name: tinyCopy.oneMore })); });
+    act(() => { fireEvent.click(screen.getByRole('button', { name: tinyCopy.done })); });
+    const items = within(screen.getByText(tinyCopy.todayTitle).closest('details')!).getAllByRole('listitem').map(li => li.textContent);
+    expect(items).toEqual(['喝一口水', '慢慢轉動肩膀三圈']);
+  });
+
   it('昨天的紀錄不顯示', () => {
     values.set('tiny.today.v1', JSON.stringify({ date: '2000-01-01', texts: ['看看窗外'] }));
     renderTiny();
