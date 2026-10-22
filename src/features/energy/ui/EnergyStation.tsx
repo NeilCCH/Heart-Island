@@ -72,9 +72,11 @@ export function EnergyStation({ runtime }: { runtime?: EnergyRuntimeDependencies
 
   // 換畫面時把焦點移到新畫面的標題；第一次載入不搶焦點。
   const mainRef = useRef<HTMLDivElement>(null);
-  const firstScreen = useRef(true);
+  const shownScreen = useRef(screen);
   useEffect(() => {
-    if (firstScreen.current) { firstScreen.current = false; return; }
+    // 比對上次畫面而非旗標：StrictMode 重跑 effect 時不會誤搶焦點。
+    if (shownScreen.current === screen) return;
+    shownScreen.current = screen;
     mainRef.current?.querySelector<HTMLElement>('[data-screen-heading]')?.focus();
   }, [screen]);
 

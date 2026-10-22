@@ -12,21 +12,25 @@
   --progress-track: #dde3eb;
   --notice: #e3e9f2;
   --focus: #2f5ea8;
-  --cat-bg: #f1e4e1;
+  --cat-floor: rgb(112 136 171 / 0.22);
+  --cat-contact: rgb(27 42 68 / 0.38);
+  --cat-lift: rgb(27 42 68 / 0.16);
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0f1626; --surface: #172036; --surface-2: #1f2a42; --text: #e6ebf3; --muted: #a3b0c4;
     --line: #2e3b55; --accent: #a9bee0; --accent-text: #0f1626; --progress: #8ea6cc;
-    --progress-track: #26324a; --notice: #1c2840; --focus: #c3d3ee; --cat-bg: #1f2a42;
+    --progress-track: #26324a; --notice: #1c2840; --focus: #c3d3ee;
+    --cat-floor: rgb(169 190 224 / 0.2); --cat-contact: rgb(0 0 0 / 0.55); --cat-lift: rgb(0 0 0 / 0.22);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0f1626; --surface: #172036; --surface-2: #1f2a42; --text: #e6ebf3; --muted: #a3b0c4;
   --line: #2e3b55; --accent: #a9bee0; --accent-text: #0f1626; --progress: #8ea6cc;
-  --progress-track: #26324a; --notice: #1c2840; --focus: #c3d3ee; --cat-bg: #1f2a42;
+  --progress-track: #26324a; --notice: #1c2840; --focus: #c3d3ee;
+  --cat-floor: rgb(169 190 224 / 0.2); --cat-contact: rgb(0 0 0 / 0.55); --cat-lift: rgb(0 0 0 / 0.22);
   color-scheme: dark;
 }
 
@@ -86,19 +90,31 @@ body {
 .notice > p + p { margin-top: 6px; }
 .notice--paused { font-weight: 600; }
 
-/* 小貓（靜態，contain 不裁切） */
+/* 小貓：去背靜態圖，站在柔和的地面光暈與接觸陰影上（無動畫、無互動） */
 .cat {
-  margin: 0; width: min(100%, 360px); aspect-ratio: 517 / 450;
-  border-radius: 24px; overflow: hidden; background: var(--cat-bg);
+  position: relative; margin: 0; width: min(100%, 300px); max-width: 100%;
+  padding-bottom: 5%;
 }
-.cat--compact { width: min(60%, 300px); }
-.cat img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.cat::before, .cat::after { content: ""; position: absolute; left: 50%; transform: translateX(-50%); pointer-events: none; }
+.cat::before { /* 地面 */
+  bottom: 0; width: 96%; height: 16%; border-radius: 50%;
+  background: radial-gradient(closest-side, var(--cat-floor), transparent);
+}
+.cat::after { /* 腳下接觸陰影 */
+  bottom: 3.5%; width: 66%; height: 7%; border-radius: 50%;
+  background: radial-gradient(closest-side, var(--cat-contact), transparent);
+}
+.cat img {
+  position: relative; z-index: 1; display: block; width: 100%; height: auto;
+  filter: drop-shadow(0 12px 14px var(--cat-lift));
+}
+.cat--compact { width: min(50%, 240px); }
 @media (max-width: 719px) {
-  .screen--home .cat { width: min(70%, 300px); }
-  .cat--compact { width: min(42%, 180px); }
+  .screen--home .cat { width: min(62%, 260px); }
+  .cat--compact { width: min(38%, 160px); }
 }
 @media (max-height: 560px) and (orientation: landscape) {
-  .cat, .cat--compact { width: 120px; }
+  .cat, .cat--compact { width: 110px; }
 }
 
 /* 引導口令：大字、高對比，遠距可讀 */

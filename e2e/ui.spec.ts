@@ -11,7 +11,7 @@ test.beforeEach(async ({ page }) => { await page.clock.install(); await page.got
 
 test('首頁→引導→暫停→組完成→休息→到期不自動下一組', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1, name: '小貓能量站' })).toBeVisible();
-  await expect(page.getByRole('img', { name: /小貓/ })).toHaveAttribute('src', '/assets/cat/original.png');
+  await expect(page.getByRole('img', { name: /小貓/ })).toHaveAttribute('src', '/assets/cat/cutout.png');
   await shot(page, 'home');
   await page.getByRole('button', { name: '開始引導' }).click();
   await expect(page.getByText('自然吐氣・慢慢舉起')).toBeVisible();
