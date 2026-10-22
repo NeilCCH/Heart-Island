@@ -1,0 +1,20 @@
+/* 療癒小花園：暖沙色沙盤是場景本身（兩種主題相同），周圍介面沿用霧白／深藍 */
+.garden-tray {
+  position: relative; width: 100%; max-width: 100%; aspect-ratio: 4 / 3;
+  border-radius: 22px; overflow: hidden; touch-action: none; user-select: none;
+  box-shadow: inset 0 0 0 6px #d6c9b2, 0 6px 18px rgb(27 42 68 / 0.12);
+  cursor: crosshair;
+}
+.garden-tray--flower, .garden-tray--stone { cursor: pointer; }
+.garden-sand, .garden-layer { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.garden-layer { pointer-events: none; }
+.garden-flower__bloom { transform-box: fill-box; transform-origin: center; animation: garden-grow 1.2s ease-out both; }
+@keyframes garden-grow { from { transform: scale(0.1); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.garden-ripple {
+  fill: none; stroke: rgb(255 255 255 / 0.85); stroke-width: 3;
+  transform-box: fill-box; transform-origin: center; animation: garden-ripple 1.6s ease-out forwards;
+}
+@keyframes garden-ripple { from { transform: scale(0.08); opacity: 1; } to { transform: scale(1); opacity: 0; } }
+
+:root[data-motion="reduced"] .garden-flower__bloom { animation: none; }
+@media (prefers-reduced-motion: reduce) { .garden-flower__bloom, .garden-ripple { animation: none; } }
