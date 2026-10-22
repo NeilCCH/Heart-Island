@@ -16,7 +16,7 @@ export interface EnergySession {
   restRemainingMs: number; restTotalMs: number; setEndReason: SetEndReason | null;
 }
 export interface EnergyState {
-  session: Readonly<EnergySession>; lastObservedAtMs: number | null; nextEffectId: number;
+  session: EnergySession; lastObservedAtMs: number | null; nextEffectId: number; isHidden: boolean;
 }
 export type EnergyCommand =
   | { type: 'start'; settings: EnergySettings }

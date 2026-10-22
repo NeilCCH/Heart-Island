@@ -1,5 +1,5 @@
 # 核心 API 契約草案 v0.3
-狀態：使用者已於 2026-10-22 核准 v0.3 修改內容（DECISIONS D05/D07/U6）；**待 Codex 交叉審查後凍結**。以 PRD v1.2 為準。
+狀態：使用者已於 2026-10-22 核准 v0.3 修改內容（DECISIONS D05/D07/U6）；**Codex已交叉審查，實作釐清見 CODEX_CROSS_REVIEW.md**。以 PRD v1.2 為準。
 
 v0.3 變更（相對 v0.2）：GuideView 增 `cyclePace`/`pendingPace`；新增 `guidancePaused` 效果；`setCompleted` 附 `guidedCycles`；`useEnergySettings` 補「記住偏好」政策介面與 `resetToDefaults`。
 
@@ -110,7 +110,7 @@ declare function useEnergySettings(): {
 
 visibilityHidden、exit、長時間中斷不追補不確定區間。背景引導與休息皆暫停，回前景不自動恢復。pagehide/pageshow 對應同一政策。重整回 idle，不恢復聲音。裝置凍結可能不送事件，需真機驗證。
 
-建議觀測間隔 >2000ms 時以 interrupted 暫停、丟棄該段時間；門檻未核准。假時鐘測長循環需按正常觀測步幅推進；大跨度測試專門驗證中斷保護，不能混為一般時間累積。
+觀測間隔 >2000ms 時以 interrupted 暫停、丟棄該段時間；D03已核准暫定值，待體驗驗證。假時鐘測長循環需按正常觀測步幅推進；大跨度測試專門驗證中斷保護，不能混為一般時間累積。
 
 一般進度快照10Hz，低動態1Hz；模式、階段、計數與操作結果立即發布。邏輯觀測獨立於快照節流。假時鐘6000ms恰加1、5999ms不加；前景顯示延遲250ms僅為待實測目標。
 
@@ -118,8 +118,11 @@ visibilityHidden、exit、長時間中斷不追補不確定區間。背景引導
 onEffects 批次交付，不使用 lastEvent；每個效果只消費一次，React StrictMode 不得重播。背景及回前景不發可播音效果；靜默結算不回補歷史口令。正常前景只播放目前有效提示，不連播已過階段。UI 依主動授權、設定及當前可見狀態播音；暫停、離開、背景時取消音訊。任何原因（user/hidden/interrupted）進入 pausedGuiding 時發出 `guidancePaused`，UI 以此取消音訊並釋放 Wake Lock。核心不呼叫音訊API。
 
 ## 設定
-預設 gentle/10/90秒/靜音/音量0.5/低動態false/theme system；音量為待定值。有效低動態=設定開啟或系統偏好開啟。
+預設 gentle/10/90秒/靜音/音量0.5/低動態false/theme system；音量0.5已由D06核准。有效低動態=設定開啟或系統偏好開啟。
 每組目標鎖定，guiding/pausedGuiding 不修改本組目標。最新速度在下一循環生效。休息設定變更只影響下次休息。儲存只含設定，以版本key及逐欄驗證；讀取失敗回預設，寫入失敗保留記憶體設定。clearSaved 僅清除此功能儲存，不中斷session、不重設記憶體設定；重設由 resetToDefaults 負責。
 
 ## 生命週期
 exit 停止排程及清空session；生命週期監聽器保留到卸載，以便重新start。卸載全部清理。排程以世代識別碼阻擋舊回呼；測試訂閱與清理的冪等性。
+
+## v0.3.1 實作釐清
+內部EnergyState增加isHidden；偏好hook增加storageError；clearSaved將remember設false，保留記憶體設定。完整規則見CODEX_CROSS_REVIEW.md。
