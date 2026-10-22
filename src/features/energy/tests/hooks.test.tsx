@@ -24,10 +24,10 @@ it('設定更新速度、重設與清除都不改當組目標或重啟', () => {
   const clock = fakeRuntime();
   const { result } = renderHook(() => { const preferences = useEnergySettings(); return { preferences, energy: useEnergySession(preferences.settings, { dependencies: clock.runtime }) }; });
   act(() => result.current.energy.actions.start()); act(() => clock.advance(1000));
-  act(() => result.current.preferences.update({ pace: 'slow', target: 6 }));
-  expect(result.current.energy.guide).toMatchObject({ cyclePace: 'gentle', pendingPace: 'slow', target: 10 });
+  act(() => result.current.preferences.update({ pace: 8, target: 6 }));
+  expect(result.current.energy.guide).toMatchObject({ cyclePace: 6, pendingPace: 8, target: 10 });
   act(() => result.current.preferences.setRemember(true)); act(() => result.current.preferences.resetToDefaults());
-  expect(result.current.energy.session.mode).toBe('guiding'); expect(result.current.energy.session.target).toBe(10); expect(result.current.energy.guide?.pendingPace).toBe('gentle');
+  expect(result.current.energy.session.mode).toBe('guiding'); expect(result.current.energy.session.target).toBe(10); expect(result.current.energy.guide?.pendingPace).toBe(6);
   act(() => result.current.preferences.clearSaved()); expect(result.current.preferences.remember).toBe(false); expect(localStorage.length).toBe(0);
 });
 it('背景後重掛控制器連線仍可手動恢復', () => {

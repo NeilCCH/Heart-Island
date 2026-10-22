@@ -15,5 +15,5 @@ test('pagehide/pageshow凍結休息並要求手動恢復', async ({ page }) => {
 test('保存偏好原生localStorage正常、重整不恢復引導', async ({ page }) => {
   await page.getByRole('button', { name:'remember', exact:true }).click(); await page.getByRole('button', { name:'brisk', exact:true }).click();
   await page.getByRole('button', { name:'start', exact:true }).click(); await page.reload(); await expect(page.getByTestId('remember')).toHaveText('true'); expect((await state(page)).mode).toBe('idle');
-  await page.getByRole('button', { name:'start', exact:true }).click(); expect((await state(page)).cyclePace).toBe('brisk');
+  await page.getByRole('button', { name:'start', exact:true }).click(); expect((await state(page)).cyclePace).toBe(4);
 });

@@ -126,3 +126,6 @@ exit 停止排程及清空session；生命週期監聽器保留到卸載，以�
 
 ## v0.3.1 實作釐清
 內部EnergyState增加isHidden；偏好hook增加storageError；clearSaved將remember設false，保留記憶體設定。完整規則見CODEX_CROSS_REVIEW.md。
+
+## v0.4 變更（2026-10-22）
+`Pace = number`：每次完整引導循環秒數，整數 `PACE_MIN`(4)–`PACE_MAX`(16)，預設 `DEFAULT_PACE`(6)。`CYCLE_MS` 改為 `cycleMs(pace)`；新增 `normalizePace()`（接受範圍內整數及舊名稱 slow/gentle/brisk→8/6/4）。`setPace`、`start`、`nextSet` 帶入無效秒數時不改變狀態。
