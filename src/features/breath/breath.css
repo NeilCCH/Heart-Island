@@ -1,0 +1,35 @@
+/* 呼吸小宇宙：刻意固定為深色星空場景（淺色主題也一樣），光球是唯一的焦點 */
+.breath-scene {
+  --space-top: #1d2b4b; --space-bottom: #0a1120; --star: rgb(230 236 248 / 0.55);
+  --orb-core: #fff6ea; --orb-mid: #f3cfa6; --orb-edge: #e2b487; --orb-glow: rgb(243 207 166 / 0.35); --scene-text: #dfe6f2;
+  position: relative; overflow: hidden; border-radius: 26px;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  padding: 20px 16px 22px; min-height: min(68dvh, 560px); justify-content: center;
+  background:
+    radial-gradient(1.5px 1.5px at 12% 18%, var(--star), transparent),
+    radial-gradient(1px 1px at 78% 12%, var(--star), transparent),
+    radial-gradient(1.5px 1.5px at 64% 72%, var(--star), transparent),
+    radial-gradient(1px 1px at 26% 84%, var(--star), transparent),
+    radial-gradient(1px 1px at 90% 54%, var(--star), transparent),
+    radial-gradient(1.5px 1.5px at 40% 40%, var(--star), transparent),
+    radial-gradient(ellipse at 50% 30%, var(--space-top), var(--space-bottom));
+  color: var(--scene-text);
+}
+.breath-scene > * { margin: 0; }
+.breath-scene__title { font-size: 1.05rem; font-weight: 600; letter-spacing: 0.08em; opacity: 0.8; }
+.breath-scene__title:focus { outline: none; }
+.breath-scene__title:focus-visible { outline: 3px solid var(--scene-text); outline-offset: 4px; border-radius: 6px; }
+.breath-orb {
+  width: min(62vw, 280px); max-width: 100%; aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle at 42% 38%, var(--orb-core), var(--orb-mid) 55%, var(--orb-edge));
+  box-shadow: 0 0 calc(30px + 50px * var(--level)) var(--orb-glow);
+  transform: scale(calc(0.55 + 0.45 * var(--level)));
+  will-change: transform;
+}
+.breath-word { font-size: 1.3rem; letter-spacing: 0.3em; opacity: 0.75; min-height: 1.6em; }
+.breath-scene__intro { font-size: 0.92rem; opacity: 0.7; text-align: center; }
+.breath-panel { padding: 16px; border-radius: 18px; background: var(--surface-2); }
+
+/* 減少動態：光球不縮放，改以文字提示吸吐 */
+:root[data-motion="reduced"] .breath-orb { transform: scale(0.82); box-shadow: 0 0 50px var(--orb-glow); }
+@media (prefers-reduced-motion: reduce) { .breath-orb { transform: scale(0.82); box-shadow: 0 0 50px var(--orb-glow); } }

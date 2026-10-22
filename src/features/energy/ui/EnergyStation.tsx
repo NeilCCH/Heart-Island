@@ -12,6 +12,7 @@ import { GuidedSet } from './screens/GuidedSet';
 import { RestScreen } from './screens/RestScreen';
 import { SetComplete } from './screens/SetComplete';
 import { SettingsSheet } from './screens/SettingsSheet';
+import { BackContext } from './components/TopBar';
 import './styles/energy.css';
 
 type Screen = 'home' | 'guide' | 'complete' | 'rest';
@@ -28,8 +29,22 @@ function isInteractive(target: EventTarget | null) {
 
 // 功能根元件：唯一掛載 useEnergySession 的地方，切換畫面或開啟設定都不會卸載。
 // 時間與計數只讀核心；UI 不自建計時器或計數器。
-export function EnergyStation({ runtime }: { runtime?: EnergyRuntimeDependencies }) {
+export type Preferences = ReturnType<typeof useEnergySettings>;
+interface StationProps { runtime?: EnergyRuntimeDependencies; preferences?: Preferences; onBack?: () => void }
+
+// 在心靈小島中由外層傳入共用偏好與返回動作；單獨使用（測試）時自己建立偏好。
+export function EnergyStation(props: StationProps) {
+  return props.preferences
+    ? <Station {...props} preferences={props.preferences} hosted />
+    : <StandaloneStation {...props} />;
+}
+
+function StandaloneStation(props: StationProps) {
   const preferences = useEnergySettings();
+  return <Station {...props} preferences={preferences} hosted={false} />;
+}
+
+function Station({ runtime, preferences, onBack, hosted }: StationProps & { preferences: Preferences; hosted: boolean }) {
   const { settings, update } = preferences;
   const motion = useEffectiveReducedMotion(settings.reducedMotion);
   // 傳給核心的是有效低動態；只在相關值變化時產生新引用。
@@ -60,7 +75,8 @@ export function EnergyStation({ runtime }: { runtime?: EnergyRuntimeDependencies
   const screen = SCREEN_OF[session.mode];
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  useThemeAttribute(settings.theme, motion.effective);
+  // 主題與低動態屬性由外層 App 統一設定；單獨使用時才自己設定。
+  useThemeAttribute(settings.theme, motion.effective, !hosted);
   const wakeLock = useWakeLock(session.mode === 'guiding' || session.mode === 'resting');
 
   useEffect(() => { if (SILENT_MODES.includes(session.mode)) audio.cancel(); }, [session.mode, audio]);
@@ -121,6 +137,7 @@ export function EnergyStation({ runtime }: { runtime?: EnergyRuntimeDependencies
   const common = { settings, update, onOpenSettings: openSettings };
 
   return (
+    <BackContext.Provider value={onBack ?? null}>
     <div className="energy">
       <div ref={mainRef} className="energy__main" inert={settingsOpen}>
         {screen === 'home' && <EnergyHome {...common} onStart={withAudio(actions.start)} />}
@@ -147,5 +164,6 @@ export function EnergyStation({ runtime }: { runtime?: EnergyRuntimeDependencies
           onClose={() => setSettingsOpen(false)} />
       )}
     </div>
+    </BackContext.Provider>
   );
 }
