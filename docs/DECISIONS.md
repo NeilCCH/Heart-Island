@@ -61,3 +61,6 @@
 - 使用者決定**不加入求助資源連結**。
 - 部署採 Vercel，使用 .vercel.app 網址、不需專屬網域；目前不使用 Supabase（無帳號、無雲端資料）。
 - 使用者要求先看第一版：以私人 Artifact 預覽與 Vercel Preview 提供，main 合併與正式部署仍待驗收。
+
+## 2026-10-22 PWA
+- 使用者指示「包入PWA」。新增 manifest、主畫面圖示（以 cutout.png 置於霧白底，未重繪）、iOS meta、離線 service worker（只快取本站檔案，正式建置才註冊）。未新增依賴。

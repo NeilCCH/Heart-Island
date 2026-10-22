@@ -76,3 +76,12 @@ test('手機寬度無水平捲動，按鈕至少 44px', async ({ page }) => {
   }
   await shot(page, 'guide-mobile');
 });
+
+test('PWA：manifest 與圖示可取得', async ({ page, request }) => {
+  const href = await page.locator('link[rel="manifest"]').getAttribute('href');
+  const manifest = await (await request.get(href!)).json();
+  expect(manifest).toMatchObject({ name: '小貓能量站', display: 'standalone', start_url: './' });
+  for (const icon of manifest.icons) expect((await request.get(`/${icon.src}`)).status()).toBe(200);
+  expect((await request.get('/sw.js')).status()).toBe(200);
+  await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', '/icons/apple-touch-icon.png');
+});

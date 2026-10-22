@@ -10,6 +10,11 @@ UI 元件測試（jsdom＋Testing Library，注入 `tests/fakeRuntime.ts`，未�
 
 Chromium E2E 涵蓋：完整流程（含空白鍵、焦點移到新畫面標題、休息到期後 60 秒仍停在「休息時間到了」）、深色主題與設定焦點鎖、pagehide/pageshow 後需手動繼續、360px 寬無水平捲動且所有按鈕高度 ≥ 44px。截圖見 `docs/screenshots/ui/`。
 
+## PWA（2026-10-22）
+- Chromium＋`vite preview` 正式建置：service worker 安裝後快取首頁、打包 JS/CSS、小貓與圖示；切成離線後重新整理仍可開啟、顯示小貓並開始引導。
+- E2E 新增 manifest／圖示／sw.js 可取得檢查。
+- 未驗證：iOS「加入主畫面」與 Android 安裝提示實機行為、Vercel 部署保護開啟時 manifest 讀取。
+
 ## 重跑方式
 ```sh
 npm ci && npm test && npm run build
