@@ -62,6 +62,33 @@ describe('療癒小花園', () => {
     expect(saved().stones.find((s: { id: string }) => s.id === first.id)).toMatchObject({ x: first.x + 100, y: first.y + 50 });
   });
 
+  it('第二根手指不會干擾正在拖動的石頭', () => {
+    renderGarden();
+    const [first] = STARTER.stones;
+    act(() => {
+      fireEvent.pointerDown(tray(), { clientX: first.x, clientY: first.y, pointerId: 1 });
+      fireEvent.pointerDown(tray(), { clientX: 900, clientY: 100, pointerId: 2 });
+      fireEvent.pointerMove(tray(), { clientX: 950, clientY: 150, pointerId: 2 });
+      fireEvent.pointerUp(tray(), { pointerId: 2 });
+      fireEvent.pointerMove(tray(), { clientX: first.x + 40, clientY: first.y + 20, pointerId: 1 });
+      fireEvent.pointerUp(tray(), { pointerId: 1 });
+    });
+    expect(saved().stones.find((s: { id: string }) => s.id === first.id)).toMatchObject({ x: first.x + 40, y: first.y + 20 });
+  });
+
+  it('拖進池塘的石頭還能再拿起來', () => {
+    renderGarden();
+    const [first] = STARTER.stones;
+    const drag = (fromX: number, fromY: number, toX: number, toY: number) => act(() => {
+      fireEvent.pointerDown(tray(), { clientX: fromX, clientY: fromY, pointerId: 1 });
+      fireEvent.pointerMove(tray(), { clientX: toX, clientY: toY, pointerId: 1 });
+      fireEvent.pointerUp(tray(), { pointerId: 1 });
+    });
+    drag(first.x, first.y, POND.cx, POND.cy);
+    drag(POND.cx, POND.cy, 200, 200);
+    expect(saved().stones.find((s: { id: string }) => s.id === first.id)).toMatchObject({ x: 200, y: 200 });
+  });
+
   it('按鈕替代觸控：種一朵花、放一顆石頭；重新開始回到預設', () => {
     renderGarden();
     act(() => { fireEvent.click(screen.getByRole('button', { name: copy.quick.flower })); });
@@ -78,6 +105,17 @@ describe('療癒小花園', () => {
     act(() => { fireEvent.click(screen.getByRole('switch', { name: copy.keep })); });
     expect(values.has('garden.items.v1')).toBe(false);
     expect(values.get('garden.keep.v1')).toBe('false');
+  });
+
+  it('空間已滿無法寫入時，關閉保存仍會刪除花園', () => {
+    values.set('garden.items.v1', JSON.stringify(STARTER));
+    values.set('garden.sand.v1', 'data:image/jpeg;base64,AAAA');
+    renderGarden();
+    const setItem = vi.fn(() => { throw new Error('QuotaExceeded'); });
+    vi.stubGlobal('localStorage', { getItem: (k: string) => values.get(k) ?? null, setItem, removeItem: (k: string) => values.delete(k), clear: () => values.clear(), get length() { return values.size; } });
+    act(() => { fireEvent.click(screen.getByRole('switch', { name: copy.keep })); });
+    expect(values.has('garden.items.v1')).toBe(false);
+    expect(values.has('garden.sand.v1')).toBe(false);
   });
 
   it('減少動態時點水面不產生漣漪動畫', () => {

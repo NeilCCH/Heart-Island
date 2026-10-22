@@ -10,7 +10,7 @@ import { drawBase, drawRake, wavePath, type Point } from './sand';
 import './garden.css';
 
 type Tool = 'rake' | 'flower' | 'stone';
-type Drag = { kind: 'rake'; last: Point } | { kind: 'stone'; id: string; dx: number; dy: number } | null;
+type Drag = ({ kind: 'rake'; last: Point } | { kind: 'stone'; id: string; dx: number; dy: number }) & { pointerId: number } | null;
 interface Ripple { id: number; x: number; y: number }
 
 const toolOptions = (['rake', 'flower', 'stone'] as const).map(value => ({ value, label: copy.tools[value] }));
@@ -84,19 +84,23 @@ export function GardenScreen({ onOpenSettings, reducedMotion, random = Math.rand
     return { x: 200, y: 200 };
   };
 
+  // 一次只跟隨一根手指：拖曳期間其他指標的按下、移動、放開都忽略。
   function onPointerDown(event: ReactPointerEvent<HTMLDivElement>) {
+    if (dragRef.current) return;
     const p = toLogical(event);
-    if (inPond(p.x, p.y)) { ripple(p.x, p.y); return; }
+    const { pointerId } = event;
+    // 先判斷石頭：石頭若被拖進池塘，仍然可以再拿起來。
     const stone = stoneAt(p);
-    trayRef.current?.setPointerCapture?.(event.pointerId);
-    if (stone) { dragRef.current = { kind: 'stone', id: stone.id, dx: stone.x - p.x, dy: stone.y - p.y }; return; }
-    if (tool === 'rake') dragRef.current = { kind: 'rake', last: p };
+    if (!stone && inPond(p.x, p.y)) { ripple(p.x, p.y); return; }
+    trayRef.current?.setPointerCapture?.(pointerId);
+    if (stone) { dragRef.current = { kind: 'stone', id: stone.id, dx: stone.x - p.x, dy: stone.y - p.y, pointerId }; return; }
+    if (tool === 'rake') dragRef.current = { kind: 'rake', last: p, pointerId };
     else if (tool === 'flower') plant(p.x, p.y);
     else placeStone(p.x, p.y);
   }
   function onPointerMove(event: ReactPointerEvent<HTMLDivElement>) {
     const drag = dragRef.current;
-    if (!drag) return;
+    if (!drag || event.pointerId !== drag.pointerId) return;
     const p = toLogical(event);
     if (drag.kind === 'rake') {
       const ctx = context();
@@ -107,8 +111,9 @@ export function GardenScreen({ onOpenSettings, reducedMotion, random = Math.rand
       setItems(current => ({ ...current, stones: current.stones.map(s => (s.id === drag.id ? { ...s, x, y } : s)) }));
     }
   }
-  function onPointerUp() {
+  function onPointerUp(event: ReactPointerEvent<HTMLDivElement>) {
     const drag = dragRef.current;
+    if (!drag || event.pointerId !== drag.pointerId) return;
     dragRef.current = null;
     if (drag?.kind === 'rake') saveSand();
   }

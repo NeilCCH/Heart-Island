@@ -51,9 +51,14 @@ export function loadKeep(): boolean {
   try { return window.localStorage.getItem(KEEP_KEY) !== 'false'; } catch { return true; }
 }
 export function saveGarden(keep: boolean, items: GardenItems, sand: string | null) {
+  if (!keep) {
+    // 先刪除花園，再記錄「不保存」；即使空間已滿、後面的寫入失敗，資料也已經刪掉。
+    try { window.localStorage.removeItem(ITEMS_KEY); window.localStorage.removeItem(SAND_KEY); } catch { /* 無法存取 */ }
+    try { window.localStorage.setItem(KEEP_KEY, 'false'); } catch { /* 空間不足：沒有花園資料時預設也不會載入任何東西 */ }
+    return;
+  }
   try {
-    window.localStorage.setItem(KEEP_KEY, String(keep));
-    if (!keep) { window.localStorage.removeItem(ITEMS_KEY); window.localStorage.removeItem(SAND_KEY); return; }
+    window.localStorage.setItem(KEEP_KEY, 'true');
     window.localStorage.setItem(ITEMS_KEY, JSON.stringify(items));
     if (sand) window.localStorage.setItem(SAND_KEY, sand); else window.localStorage.removeItem(SAND_KEY);
   } catch { /* 空間不足或被封鎖：花園照常可用，只是不保存 */ }
