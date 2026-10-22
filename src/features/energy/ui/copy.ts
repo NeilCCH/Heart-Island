@@ -13,6 +13,7 @@ export const copy = {
   restLabel: '組間休息',
   start: '開始引導',
   settings: '設定',
+  backToIsland: '← 回小島',
   phase: {
     exhaleLift: '自然吐氣・慢慢舉起',
     inhaleLower: '自然吸氣・慢慢放下',

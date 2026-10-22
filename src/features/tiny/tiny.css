@@ -1,0 +1,31 @@
+/* 今天一點點：一張安靜的卡片，沒有進度、分數或連續天數 */
+.tiny-card {
+  display: flex; flex-direction: column; gap: 10px; align-items: flex-start;
+  min-height: 170px; justify-content: center;
+  padding: 24px 20px; border-radius: 22px; background: var(--surface); border: 1.5px solid var(--line);
+}
+.tiny-card > * { margin: 0; }
+.tiny-card__text { font-size: clamp(1.5rem, 6vw, 2rem); font-weight: 700; line-height: 1.35; }
+a.btn { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+.btn--link { background: transparent; }
+
+.tiny-list { display: flex; flex-direction: column; gap: 16px; padding: 16px; border-radius: 18px; background: var(--surface-2); }
+.tiny-group__title { font-size: 0.95rem; color: var(--muted); margin: 0 0 6px; }
+.tiny-group ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.tiny-item { display: flex; gap: 6px; align-items: center; }
+.tiny-item__pick {
+  flex: 1; min-height: 44px; text-align: left; padding: 8px 14px; border-radius: 12px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--text); font: inherit; cursor: pointer;
+}
+.tiny-item__pick:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.tiny-add { display: flex; flex-direction: column; gap: 6px; }
+.tiny-add label { font-weight: 600; }
+.tiny-add__row { display: flex; gap: 8px; }
+.tiny-add input {
+  flex: 1; min-width: 0; min-height: 44px; padding: 8px 12px; border-radius: 12px;
+  border: 1.5px solid var(--line); background: var(--surface); color: var(--text); font: inherit;
+}
+.tiny-add input:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.tiny-today { padding: 12px 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
+.tiny-today summary { cursor: pointer; font-weight: 600; min-height: 32px; }
+.tiny-today ul { margin: 8px 0; padding-left: 1.2em; }

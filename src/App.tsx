@@ -1,5 +1,5 @@
-import { EnergyStation } from './features/energy/ui/EnergyStation';
+import { IslandApp } from './island/IslandApp';
 
 export default function App() {
-  return <EnergyStation />;
+  return <IslandApp />;
 }
