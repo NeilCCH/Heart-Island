@@ -1,10 +1,20 @@
 import type { EnergyState, EnergySession, EnergyCommand, EnergyEffect, EnergySettings, Pace, PauseReason, GuideView, RestView } from './types';
-export const CYCLE_MS: Record<Pace, number> = { slow: 8000, gentle: 6000, brisk: 4000 };
+export const PACE_MIN = 4;
+export const PACE_MAX = 16;
+export const DEFAULT_PACE: Pace = 6;
+// v0.3 以前保存的固定節奏名稱，讀取時轉成秒數。
+export const LEGACY_PACE: Record<string, Pace> = { slow: 8, gentle: 6, brisk: 4 };
+export function normalizePace(value: unknown): Pace | null {
+  if (typeof value === 'string' && value in LEGACY_PACE) return LEGACY_PACE[value];
+  if (typeof value === 'number' && Number.isInteger(value) && value >= PACE_MIN && value <= PACE_MAX) return value;
+  return null;
+}
+export const cycleMs = (pace: Pace) => pace * 1000;
 export const INTERRUPTION_MS = 2000;
 export function createInitialState(): EnergyState {
   return { session: { mode: 'idle', setIndex: 0, guidedCycles: 0, phase: null,
     activeElapsedMs: 0, cycleElapsedMs: 0, target: 10, cyclePace: null,
-    pendingPace: 'gentle', pauseReason: null, restRemainingMs: 0, restTotalMs: 0,
+    pendingPace: DEFAULT_PACE, pauseReason: null, restRemainingMs: 0, restTotalMs: 0,
     setEndReason: null }, lastObservedAtMs: null, nextEffectId: 1, isHidden: false };
 }
 const active = (s: EnergySession) => s.mode === 'guiding' || s.mode === 'resting';
@@ -24,7 +34,9 @@ export function transition(previous: Readonly<EnergyState>, command: EnergyComma
     || (command.type === 'resumeRest' && mode === 'pausedRest' && !previous.isHidden)
     || ((command.type === 'extendRest' || command.type === 'skipRest') && resting(previous.session))
     || (command.type === 'nextSet' && (mode === 'setComplete' || mode === 'readyNext') && !previous.isHidden);
-  if (!allowed || (command.type === 'start' && previous.isHidden)) return { state: previous, effects: [] };
+  const invalidPace = (command.type === 'setPace' && normalizePace(command.pace) === null)
+    || ((command.type === 'start' || command.type === 'nextSet') && normalizePace(command.settings.pace) === null);
+  if (!allowed || invalidPace || (command.type === 'start' && previous.isHidden)) return { state: previous, effects: [] };
   const state: EnergyState = { ...previous, session: { ...previous.session } };
   let s = state.session;
   let effects: EnergyEffect[] = [];
@@ -75,7 +87,7 @@ export function transition(previous: Readonly<EnergyState>, command: EnergyComma
     } else {
       let remaining = delta;
       while (remaining > 0 && s.mode === 'guiding') {
-        const duration = CYCLE_MS[s.cyclePace!];
+        const duration = cycleMs(s.cyclePace!);
         const boundary = s.phase === 'exhaleLift' ? duration / 2 : duration;
         const used = Math.min(remaining, boundary - s.cycleElapsedMs);
         s.cycleElapsedMs += used; s.activeElapsedMs += used; remaining -= used;
@@ -109,7 +121,7 @@ export function transition(previous: Readonly<EnergyState>, command: EnergyComma
 }
 export function getGuideView(s: Readonly<EnergySession>): GuideView | null {
   if (!guiding(s) || !s.cyclePace || !s.phase) return null;
-  const phaseDurationMs = CYCLE_MS[s.cyclePace] / 2;
+  const phaseDurationMs = cycleMs(s.cyclePace) / 2;
   const elapsed = s.cycleElapsedMs - (s.phase === 'inhaleLower' ? phaseDurationMs : 0);
   return { phase: s.phase, phaseDurationMs, phaseRemainingMs: Math.max(0, phaseDurationMs - elapsed), phaseRatio: Math.min(1, Math.max(0, elapsed / phaseDurationMs)), guidedCycles: s.guidedCycles, target: s.target, setIndex: s.setIndex, pauseReason: s.pauseReason, cyclePace: s.cyclePace, pendingPace: s.pendingPace };
 }

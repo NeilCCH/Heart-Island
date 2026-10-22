@@ -1,4 +1,5 @@
-export type Pace = 'slow' | 'gentle' | 'brisk';
+// 每次完整引導循環（吐氣舉起＋吸氣放下）的秒數，整數 PACE_MIN..PACE_MAX；兩段各佔一半。
+export type Pace = number;
 export type RepTarget = 6 | 8 | 10 | 12 | null;
 export type Phase = 'exhaleLift' | 'inhaleLower';
 export type Mode = 'idle' | 'guiding' | 'pausedGuiding' | 'setComplete' | 'resting' | 'pausedRest' | 'readyNext';

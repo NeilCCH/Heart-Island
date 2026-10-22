@@ -152,6 +152,16 @@ body {
 .option input:focus-visible + .option__face { outline: 3px solid var(--focus); outline-offset: 2px; }
 .options--compact .option__face { min-height: 44px; }
 
+/* 節奏滑桿：觸控高度 44px，刻度文字標示兩端意義 */
+.pace { display: flex; flex-direction: column; gap: 6px; }
+.pace__head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.pace__head .options__legend { margin: 0; }
+.pace__value { font-weight: 700; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.pace__range { width: 100%; min-height: 44px; margin: 0; accent-color: var(--accent); cursor: pointer; }
+.pace__range:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 8px; }
+.pace__scale { display: flex; justify-content: space-between; color: var(--muted); font-size: 0.85rem; }
+.pace > p { margin: 0; }
+
 /* 按鈕：最少 44×44 */
 .controls { display: flex; flex-wrap: wrap; gap: 10px; }
 .controls > .btn { flex: 1 1 120px; }

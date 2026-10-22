@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { createInitialState, transition, getGuideView, getRestView, CYCLE_MS } from '../core/machine';
+import { createInitialState, transition, getGuideView, getRestView, cycleMs, PACE_MIN, PACE_MAX } from '../core/machine';
 import { DEFAULT_SETTINGS as defaults } from '../settings/preferences';
-import type { EnergyCommand, EnergySettings, EnergyEffect, Pace } from '../core/types';
+import type { EnergyCommand, EnergySettings, EnergyEffect } from '../core/types';
 function engine(settings: Partial<EnergySettings> = {}) {
   let state = createInitialState(); let now = 0; const events: EnergyEffect[] = [];
   const send = (command: EnergyCommand) => { const result = transition(state, command, now); state = result.state; events.push(...result.effects); return result; };
@@ -12,8 +12,8 @@ function engine(settings: Partial<EnergySettings> = {}) {
   };
 }
 describe('完整引導循環', () => {
-  it.each(['slow', 'gentle', 'brisk'] as Pace[])('%s：完整才加一，phase及selector一致', pace => {
-    const e = engine({ pace }); const ms = CYCLE_MS[pace];
+  it.each([4, 5, 6, 8, 11, 16])('每次 %i 秒：完整才加一，phase及selector一致', pace => {
+    const e = engine({ pace }); const ms = cycleMs(pace);
     e.advance(ms / 2 - 1); expect(e.s().guidedCycles).toBe(0); expect(e.s().phase).toBe('exhaleLift');
     e.advance(1); expect(e.s().phase).toBe('inhaleLower'); expect(getGuideView(e.s())?.phaseRatio).toBe(0);
     e.advance(ms / 2 - 1); expect(e.s().guidedCycles).toBe(0);
@@ -34,11 +34,16 @@ describe('完整引導循環', () => {
     const e = engine(); e.advance(9000); e.send({ type: 'finishSet' }); expect(e.s().guidedCycles).toBe(1);
     expect(e.events.at(-1)).toMatchObject({ type: 'setCompleted', reason: 'manual', guidedCycles: 1 });
   });
+  it('範圍外或非整數秒數不接受', () => {
+    const e = engine(); e.send({ type: 'setPace', pace: PACE_MIN - 1 }); e.send({ type: 'setPace', pace: PACE_MAX + 1 }); e.send({ type: 'setPace', pace: 6.5 });
+    expect(e.s().pendingPace).toBe(6);
+    const bad = transition(createInitialState(), { type: 'start', settings: { ...defaults, pace: 99 } }, 0); expect(bad.state.session.mode).toBe('idle');
+  });
   it('前景跨邊界延遲保留餘數', () => { const e = engine(); e.advance(5900); e.jump(200); e.send({ type: 'tick' }); expect(e.s().guidedCycles).toBe(1); expect(e.s().cycleElapsedMs).toBe(100); });
   it('速度本循環鎖定，下一循環用最後值', () => {
-    const e = engine(); e.advance(3500); e.send({ type: 'setPace', pace: 'slow' }); e.send({ type: 'setPace', pace: 'brisk' });
-    expect(getGuideView(e.s())).toMatchObject({ cyclePace: 'gentle', pendingPace: 'brisk' });
-    e.advance(2500); expect(e.s().cyclePace).toBe('brisk'); e.advance(4000); expect(e.s().guidedCycles).toBe(2);
+    const e = engine(); e.advance(3500); e.send({ type: 'setPace', pace: 8 }); e.send({ type: 'setPace', pace: 4 });
+    expect(getGuideView(e.s())).toMatchObject({ cyclePace: 6, pendingPace: 4 });
+    e.advance(2500); expect(e.s().cyclePace).toBe(4); e.advance(4000); expect(e.s().guidedCycles).toBe(2);
   });
   it('背景不結算不確定區間，回前景不自動恢復或發聲', () => {
     const e = engine(); e.advance(5900); e.jump(100); e.send({ type: 'visibilityHidden' });

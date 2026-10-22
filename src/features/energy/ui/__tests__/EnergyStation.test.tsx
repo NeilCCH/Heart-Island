@@ -21,7 +21,10 @@ function setup() {
   const choose = (group: string, label: string) => act(() => {
     fireEvent.click(within(screen.getByRole('group', { name: group })).getByRole('radio', { name: new RegExp(label) }));
   });
-  return { clock, view, advance, click, choose };
+  const setPace = (seconds: number) => act(() => {
+    fireEvent.change(screen.getByRole('slider', { name: copy.paceLabel }), { target: { value: String(seconds) } });
+  });
+  return { clock, view, advance, click, choose, setPace };
 }
 const heading = () => screen.getByRole('heading', { level: 1 });
 const announcer = () => screen.getByTestId('announcer').textContent?.replace(/​/g, '');
@@ -75,9 +78,9 @@ describe('小貓能量站 UI', () => {
   });
 
   it('達目標只到完成畫面，不自動下一組；結束本組不計半循環', () => {
-    const { advance, click, choose } = setup();
+    const { advance, click, choose, setPace } = setup();
     choose(copy.targetLabel, '^6$');
-    choose(copy.paceLabel, '稍快');
+    setPace(4);
     click(copy.start); advance(4000 * 6);
     expect(heading().textContent).toBe(copy.completeTitle);
     expect(screen.getByText('已引導 6 次')).toBeTruthy();
@@ -90,21 +93,33 @@ describe('小貓能量站 UI', () => {
   });
 
   it('不限模式不自動結束', () => {
-    const { advance, click, choose } = setup();
-    choose(copy.targetLabel, '不限'); choose(copy.paceLabel, '稍快');
+    const { advance, click, choose, setPace } = setup();
+    choose(copy.targetLabel, '不限'); setPace(4);
     click(copy.start); advance(4000 * 15);
     expect(screen.getByText('已引導 15 次')).toBeTruthy();
     expect(screen.getByText('不限次數')).toBeTruthy();
   });
 
-  it('引導中改速度：本循環不變，顯示下一循環生效', () => {
-    const { advance, click, choose } = setup();
+  it('引導中拖動節奏滑桿：本循環不變，下一循環生效', () => {
+    const { advance, click, setPace } = setup();
     click(copy.start); advance(1000);
-    choose(copy.paceLabel, '較慢');
-    expect(screen.getByText(copy.pendingPace('slow'))).toBeTruthy();
+    setPace(10);
+    expect(screen.getByText(copy.pendingPace(10))).toBeTruthy();
+    expect(screen.getByRole('slider', { name: copy.paceLabel }).getAttribute('aria-valuetext')).toBe('每次 10 秒，吐氣 5 秒、吸氣 5 秒');
     advance(5000);
     expect(screen.getByText('已引導 1 次')).toBeTruthy();
-    expect(screen.queryByText(copy.pendingPace('slow'))).toBeNull();
+    expect(screen.queryByText(copy.pendingPace(10))).toBeNull();
+    advance(9999);
+    expect(screen.getByText('已引導 1 次')).toBeTruthy();
+    advance(1);
+    expect(screen.getByText('已引導 2 次')).toBeTruthy();
+  });
+
+  it('首頁節奏滑桿可選任意整數秒，奇數秒顯示半秒', () => {
+    const { setPace } = setup();
+    setPace(7);
+    expect(screen.getByText('每次 7 秒')).toBeTruthy();
+    expect(screen.getByText('吐氣舉起 3.5 秒・吸氣放下 3.5 秒')).toBeTruthy();
   });
 
   it('休息：暫停、+30秒、到期只提示，不自動開始下一組', () => {

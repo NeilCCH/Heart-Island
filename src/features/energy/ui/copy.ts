@@ -21,13 +21,17 @@ export const copy = {
     exhaleLift: '吐氣舉起',
     inhaleLower: '吸氣放下',
   } satisfies Record<Phase, string>,
-  paceName: { slow: '較慢', gentle: '舒緩', brisk: '稍快' } satisfies Record<Pace, string>,
-  paceDetail: { slow: '8 秒一次', gentle: '6 秒一次', brisk: '4 秒一次' } satisfies Record<Pace, string>,
+  paceHint: '拖動調整每次引導的秒數；數字越大越慢。',
+  paceValue: (p: Pace) => `每次 ${p} 秒`,
+  paceSplit: (p: Pace) => `吐氣舉起 ${half(p)} 秒・吸氣放下 ${half(p)} 秒`,
+  paceSpoken: (p: Pace) => `每次 ${p} 秒，吐氣 ${half(p)} 秒、吸氣 ${half(p)} 秒`,
+  paceFast: '稍快',
+  paceSlow: '較慢',
   setIndex: (n: number) => `第 ${n} 組`,
   guided: (n: number) => `已引導 ${n} 次`,
   targetOf: (t: RepTarget) => (t === null ? '不限次數' : `目標 ${t} 次`),
   targetOption: (t: RepTarget) => (t === null ? '不限' : `${t}`),
-  pendingPace: (p: Pace) => `下一個循環起改為「${copy.paceName[p]}」`,
+  pendingPace: (p: Pace) => `下一個循環起改為每次 ${p} 秒`,
   phaseRemaining: (s: number) => `這一段還有 ${s} 秒`,
   pausedUser: '已暫停。準備好再按「繼續」。',
   pausedHidden: '剛剛離開了畫面，已幫你暫停。準備好再按「繼續」。',
@@ -72,6 +76,8 @@ export const copy = {
   privacy: '不需登入，不蒐集健康資料，也沒有任何追蹤。',
   catAlt: '橘色虎斑小貓（靜態圖片）',
 } as const;
+
+function half(p: Pace) { return Number.isInteger(p / 2) ? String(p / 2) : (p / 2).toFixed(1); }
 
 // 不得出現在介面上的壓力或誤導字詞（PRD §7、§1）。
 export const BANNED_WORDS = ['失敗', '落後', '必須完成', '獎章', '分數', '排名', '打卡', '偵測到', '實際完成'];

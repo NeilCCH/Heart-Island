@@ -1,10 +1,11 @@
 import type { EnergySettings } from '../core/types';
+import { DEFAULT_PACE, normalizePace } from '../core/machine';
 export const SETTINGS_KEY = 'energy.settings.v1';
-export const DEFAULT_SETTINGS: EnergySettings = { pace: 'gentle', target: 10, restSeconds: 90, soundEnabled: false, volume: 0.5, reducedMotion: false, theme: 'system' };
+export const DEFAULT_SETTINGS: EnergySettings = { pace: DEFAULT_PACE, target: 10, restSeconds: 90, soundEnabled: false, volume: 0.5, reducedMotion: false, theme: 'system' };
 export function validateSettings(raw: unknown): EnergySettings {
   const s = raw && typeof raw === 'object' ? raw as Record<string, unknown> : {};
   const result = { ...DEFAULT_SETTINGS };
-  if (s.pace === 'slow' || s.pace === 'gentle' || s.pace === 'brisk') result.pace = s.pace;
+  const pace = normalizePace(s.pace); if (pace !== null) result.pace = pace;
   if (s.target === null || s.target === 6 || s.target === 8 || s.target === 10 || s.target === 12) result.target = s.target;
   if (s.restSeconds === 30 || s.restSeconds === 60 || s.restSeconds === 90 || s.restSeconds === 120 || s.restSeconds === 180) result.restSeconds = s.restSeconds;
   if (typeof s.volume === 'number' && Number.isFinite(s.volume) && s.volume >= 0 && s.volume <= 1) result.volume = s.volume;

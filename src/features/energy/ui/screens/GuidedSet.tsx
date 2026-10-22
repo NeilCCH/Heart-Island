@@ -31,7 +31,7 @@ export function GuidedSet({ guide, paused, settings, update, wakeLockAvailable, 
           </p>
           <p className="muted small">{copy.countNote}</p>
           {guide.cyclePace !== guide.pendingPace && <p className="tag">{copy.pendingPace(guide.pendingPace)}</p>}
-          <PacePicker value={settings.pace} update={update} compact hint="改變後，從下一個循環開始。" />
+          <PacePicker value={settings.pace} update={update} hint="拖動調整秒數，從下一個循環開始。" />
           {!wakeLockAvailable && <p className="muted small">{copy.wakeLockUnavailable}</p>}
           <div className="controls controls--sticky">
             {paused
