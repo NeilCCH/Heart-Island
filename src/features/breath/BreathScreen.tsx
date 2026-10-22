@@ -13,7 +13,14 @@ interface BreathPrefs { pace: number; ratio: Ratio; showText: boolean }
 const PREFS_KEY = 'breath.prefs.v1';
 const DEFAULTS: BreathPrefs = { pace: BREATH_DEFAULT, ratio: 'even', showText: true };
 
-function loadPrefs(): BreathPrefs {
+// 共用的「清除已保存的偏好」或關閉「記住我的偏好」時，由外層呼叫一併刪除。
+export function clearBreathPrefs() {
+  try { window.localStorage.removeItem(PREFS_KEY); } catch { /* 無法存取時本來就沒有保存 */ }
+}
+
+// 只有使用者選擇記住偏好時才讀取，避免載入已不該保留的舊設定。
+function loadPrefs(remember: boolean): BreathPrefs {
+  if (!remember) return DEFAULTS;
   try {
     const raw = JSON.parse(window.localStorage.getItem(PREFS_KEY) ?? 'null');
     if (!raw || typeof raw !== 'object') return DEFAULTS;
@@ -32,7 +39,7 @@ const ratioOptions = [{ value: 'even' as Ratio, label: copy.ratioEven }, { value
 export function BreathScreen({ runtime, remember, volume, reducedMotion, onOpenSettings }: {
   runtime: EnergyRuntimeDependencies; remember: boolean; volume: number; reducedMotion: boolean; onOpenSettings: () => void;
 }) {
-  const [prefs, setPrefs] = useState<BreathPrefs>(loadPrefs);
+  const [prefs, setPrefs] = useState<BreathPrefs>(() => loadPrefs(remember));
   const [running, setRunning] = useState(() => !runtime.isHidden());
   const [pausedByHidden, setPausedByHidden] = useState(false);
   const [adjusting, setAdjusting] = useState(false);
@@ -49,7 +56,7 @@ export function BreathScreen({ runtime, remember, volume, reducedMotion, onOpenS
   useEffect(() => {
     try {
       if (remember) window.localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
-      else window.localStorage.removeItem(PREFS_KEY);
+      else clearBreathPrefs();
     } catch { /* 只留在記憶體 */ }
   }, [prefs, remember]);
 

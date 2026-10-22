@@ -1,8 +1,8 @@
-import { useId, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useId, useMemo, useState, type FormEvent } from 'react';
 import { TopBar } from '../energy/ui/components/TopBar';
 import { ACTIVITIES, CATEGORY_NAME, type Activity } from './activities';
 import { tinyCopy as copy } from './copy';
-import { loadMine, loadToday, saveMine, saveToday } from './storage';
+import { loadMine, loadToday, localDate, saveMine, saveToday } from './storage';
 import './tiny.css';
 
 const RECENT = 6;
@@ -22,6 +22,19 @@ export function TinyScreen({ onOpenSettings, random = Math.random }: { onOpenSet
   const [acknowledged, setAcknowledged] = useState(false);
   const [choosing, setChoosing] = useState(false);
   const [today, setToday] = useState<string[]>(() => loadToday());
+
+  // 畫面一直開著跨過午夜，或隔天回到前景時，重新讀取，讓「今天做過的」只顯示今天。
+  useEffect(() => {
+    let day = localDate();
+    const refresh = () => {
+      if (document.hidden) return;
+      const now = localDate();
+      if (now !== day) { day = now; setToday(loadToday(now)); }
+    };
+    const timer = window.setInterval(refresh, 60_000);
+    document.addEventListener('visibilitychange', refresh);
+    return () => { window.clearInterval(timer); document.removeEventListener('visibilitychange', refresh); };
+  }, []);
   const [draft, setDraft] = useState('');
   const inputId = useId();
 

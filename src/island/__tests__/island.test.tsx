@@ -49,6 +49,13 @@ describe('心靈小島首頁', () => {
     expect(heading().textContent).toBe('心靈小島');
   });
 
+  it('進入小貓能量站時焦點也移到它的標題', () => {
+    setup();
+    goTo('小貓能量站');
+    expect(heading().textContent).toBe('小貓能量站');
+    expect(document.activeElement).toBe(heading());
+  });
+
   it('小貓能量站在小島中可返回，且共用設定（深色主題套用到全島）', () => {
     setup();
     act(() => { fireEvent.click(screen.getByRole('button', { name: '設定' })); });
@@ -83,6 +90,17 @@ describe('今天一點點', () => {
     act(() => { fireEvent.click(screen.getByRole('button', { name: tinyCopy.another })); });
     expect(screen.queryByText('喝一口水')).toBeNull();
     expect(screen.getByText('慢慢轉動肩膀三圈')).toBeTruthy();
+  });
+
+  it('畫面開著跨過午夜，「今天做過的」自動清空', () => {
+    vi.useFakeTimers({ toFake: ['Date', 'setInterval', 'clearInterval'] });
+    vi.setSystemTime(new Date(2026, 9, 22, 23, 59, 30));
+    renderTiny();
+    act(() => { fireEvent.click(screen.getByRole('button', { name: tinyCopy.done })); });
+    expect(screen.getByText(tinyCopy.todayTitle)).toBeTruthy();
+    act(() => { vi.advanceTimersByTime(61_000); });
+    expect(screen.queryByText(tinyCopy.todayTitle)).toBeNull();
+    vi.useRealTimers();
   });
 
   it('昨天的紀錄不顯示', () => {
@@ -126,6 +144,27 @@ describe('呼吸小宇宙', () => {
     act(() => clock.visibility(true)); advance(60000); act(() => clock.visibility(false));
     expect(screen.getByText(breathCopy.pausedHidden)).toBeTruthy();
     expect(screen.getByRole('button', { name: breathCopy.resume })).toBeTruthy();
+  });
+
+  it('未選擇記住偏好時不載入殘留的呼吸設定，並把它刪除', () => {
+    values.set('breath.prefs.v1', JSON.stringify({ pace: 14, ratio: 'longExhale', showText: false }));
+    setup();
+    expect(values.has('breath.prefs.v1')).toBe(false);
+    goTo('呼吸小宇宙');
+    act(() => { fireEvent.click(screen.getByRole('button', { name: breathCopy.adjust })); });
+    expect(screen.getByText('每次 8 秒')).toBeTruthy();
+  });
+
+  it('記住偏好時保存呼吸設定；清除已保存的偏好會一併刪除', () => {
+    values.set('energy.settings.v1', JSON.stringify({ version: 1, settings: {} }));
+    values.set('breath.prefs.v1', JSON.stringify({ pace: 12, ratio: 'even', showText: true }));
+    setup();
+    goTo('呼吸小宇宙');
+    act(() => { fireEvent.click(screen.getByRole('button', { name: breathCopy.adjust })); });
+    expect(screen.getByText('每次 12 秒')).toBeTruthy();
+    act(() => { fireEvent.click(screen.getByRole('button', { name: '設定' })); });
+    act(() => { fireEvent.click(screen.getByRole('button', { name: '清除已保存的偏好' })); });
+    expect(values.has('breath.prefs.v1')).toBe(false);
   });
 
   it('調整速度與比例；背景音預設關閉且不建立 AudioContext', () => {

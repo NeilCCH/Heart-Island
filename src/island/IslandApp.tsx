@@ -8,7 +8,7 @@ import { EnergyStation } from '../features/energy/ui/EnergyStation';
 import { useEffectiveReducedMotion } from '../features/energy/ui/hooks/useEffectiveReducedMotion';
 import { useThemeAttribute } from '../features/energy/ui/hooks/useThemeAttribute';
 import { SettingsSheet } from '../features/energy/ui/screens/SettingsSheet';
-import { BreathScreen } from '../features/breath/BreathScreen';
+import { BreathScreen, clearBreathPrefs } from '../features/breath/BreathScreen';
 import { TinyScreen } from '../features/tiny/TinyScreen';
 import { IslandHome } from './IslandHome';
 import { useHashRoute, type Route } from './useHashRoute';
@@ -43,6 +43,9 @@ export function IslandApp({ runtime: injected }: { runtime?: EnergyRuntimeDepend
     (opener.isConnected ? opener : mainRef.current?.querySelector<HTMLElement>('[aria-haspopup="dialog"]'))?.focus();
   }, [settingsOpen]);
 
+  // 不再記住偏好時（含「清除已保存的偏好」），各功能自己的偏好也一併刪除。
+  useEffect(() => { if (!preferences.remember) clearBreathPrefs(); }, [preferences.remember]);
+
   // 換地方時把焦點移到新畫面標題；第一次載入不搶焦點。
   const shownRoute = useRef(route);
   useEffect(() => {
@@ -52,7 +55,8 @@ export function IslandApp({ runtime: injected }: { runtime?: EnergyRuntimeDepend
     mainRef.current?.querySelector<HTMLElement>('[data-screen-heading]')?.focus();
   }, [route]);
 
-  if (route === 'energy') return <EnergyStation preferences={preferences} onBack={back} runtime={injected} />;
+  // 小貓能量站自帶版面與設定；仍包在 mainRef 內，讓上方的焦點 effect 能找到它的標題。
+  if (route === 'energy') return <div ref={mainRef}><EnergyStation preferences={preferences} onBack={back} runtime={injected} /></div>;
 
   return (
     <div className="energy">
