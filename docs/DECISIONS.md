@@ -51,3 +51,16 @@
 - 使用者「我只要你們兩個快點用好」後，Codex已明示並開始Gate1/Gate2協作；main合併/部署保留人工驗收。
 - 正面六視角裁切圖獲本輪實作採用：僅裁掉標籤，無生成或重繪，517×450 PNG。此為核准角色裁切素材，不稱原始照片。覆蓋舊D08/U4素材待定狀態。
 - v0.3四項新增API交叉審查同意；釐清clearSaved會關閉remember、儲存失敗回傳storageError及內部isHidden，見CODEX_CROSS_REVIEW.md。
+
+## 2026-10-22 小貓去背呈現
+- 使用者要求「把小貓去背，呈現像立體站在畫面上」。以 rembg（isnet-general-use）對 public/assets/cat/original.png 去背並裁到主體，存為 public/assets/cat/cutout.png（361×436，透明背景）。只移除背景，未重繪、未生成、未換貓；original.png 保留未動。
+- 立體感只用 CSS 靜態地面光暈、腳下接觸陰影與 drop-shadow；無動畫、無互動、非 3D 模型，符合 PRD §3-8。
+
+## 2026-10-22 產品定位與部署
+- 使用者確認定位：給憂鬱症患者「轉移注意力」的小程序，附帶運動時的專注計數；**非治療目的**。首頁介紹文案依此更新；既有「不是醫療或運動處方」與身體不適停止說明保留。
+- 使用者決定**不加入求助資源連結**。
+- 部署採 Vercel，使用 .vercel.app 網址、不需專屬網域；目前不使用 Supabase（無帳號、無雲端資料）。
+- 使用者要求先看第一版：以私人 Artifact 預覽與 Vercel Preview 提供，main 合併與正式部署仍待驗收。
+
+## 2026-10-22 PWA
+- 使用者指示「包入PWA」。新增 manifest、主畫面圖示（以 cutout.png 置於霧白底，未重繪）、iOS meta、離線 service worker（只快取本站檔案，正式建置才註冊）。未新增依賴。
