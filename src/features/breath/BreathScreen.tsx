@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useState, type CSSProperties } from 'react';
+import { useCallback, useEffect, useId, useState } from 'react';
 import type { EnergyRuntimeDependencies } from '../energy/core/types';
 import { OptionGroup } from '../energy/ui/components/OptionGroup';
 import { TouchRange } from '../energy/ui/components/TouchRange';
@@ -6,6 +6,7 @@ import { copy as energyCopy } from '../energy/ui/copy';
 import { TopBar } from '../energy/ui/components/TopBar';
 import { useWakeLock } from '../energy/ui/hooks/useWakeLock';
 import { BREATH_DEFAULT, BREATH_MAX, BREATH_MIN, breathAt, phaseSeconds, type Ratio } from './breathMath';
+import { BreathSky } from './BreathSky';
 import { breathCopy as copy } from './copy';
 import { useAmbient } from './useAmbient';
 import { useBreathClock } from './useBreathClock';
@@ -70,15 +71,14 @@ export function BreathScreen({ runtime, remember, volume, reducedMotion, onOpenS
   const resume = () => { if (ambientOn) ambient.unlock(); setPausedByHidden(false); setRunning(true); };
   const toggleAmbient = (on: boolean) => { if (on) ambient.unlock(); setAmbientOn(on); };
 
-  const orbStyle = { '--level': reducedMotion ? 0.6 : level } as CSSProperties;
   const showWord = prefs.showText || reducedMotion;
 
   return (
     <div className="screen feature breath">
       <TopBar label={copy.title} onOpenSettings={onOpenSettings} />
-      <div className="breath-scene">
+      <div className={`breath-scene${reducedMotion ? ' breath-scene--still' : ''}`} data-phase={phase}>
+        <BreathSky level={level} position={position} ratio={prefs.ratio} still={reducedMotion} />
         <h1 tabIndex={-1} data-screen-heading className="breath-scene__title">{copy.title}</h1>
-        <div className="breath-orb" style={orbStyle} data-phase={phase} aria-hidden="true" />
         <p className="breath-word" aria-hidden={!showWord}>{showWord ? (phase === 'inhale' ? copy.inhale : copy.exhale) : ' '}</p>
         <p className="breath-scene__intro">{copy.intro}</p>
       </div>
