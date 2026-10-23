@@ -1,5 +1,7 @@
 // 每次完整引導循環（吐氣舉起＋吸氣放下）的秒數，整數 PACE_MIN..PACE_MAX；兩段各佔一半。
 export type Pace = number;
+// 陪伴的萌寵（小貓或小狗），能量站與陪伴屋共用。
+export type Pet = 'cat' | 'dog';
 export type RepTarget = 6 | 8 | 10 | 12 | null;
 export type Phase = 'exhaleLift' | 'inhaleLower';
 export type Mode = 'idle' | 'guiding' | 'pausedGuiding' | 'setComplete' | 'resting' | 'pausedRest' | 'readyNext';
@@ -8,7 +10,7 @@ export type SetEndReason = 'target' | 'manual';
 export interface EnergySettings {
   pace: Pace; target: RepTarget; restSeconds: 30 | 60 | 90 | 120 | 180;
   soundEnabled: boolean; volume: number; reducedMotion: boolean;
-  theme: 'system' | 'light' | 'dark';
+  theme: 'system' | 'light' | 'dark'; pet: Pet;
 }
 export interface EnergySession {
   mode: Mode; setIndex: number; guidedCycles: number; phase: Phase | null;

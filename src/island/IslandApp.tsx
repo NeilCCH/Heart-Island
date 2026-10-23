@@ -64,11 +64,11 @@ export function IslandApp({ runtime: injected }: { runtime?: EnergyRuntimeDepend
     <div className="energy">
       <div ref={mainRef} className="energy__main" inert={settingsOpen}>
         <BackContext.Provider value={route === 'home' ? null : back}>
-          {route === 'home' && <IslandHome available={AVAILABLE} onOpenSettings={openSettings} />}
+          {route === 'home' && <IslandHome available={AVAILABLE} pet={settings.pet} onOpenSettings={openSettings} />}
           {route === 'tiny' && <TinyScreen onOpenSettings={openSettings} />}
           {route === 'garden' && <GardenScreen onOpenSettings={openSettings} reducedMotion={motion.effective} />}
           {route === 'companion' && (
-            <CompanionScreen soundEnabled={settings.soundEnabled} volume={settings.volume} reducedMotion={motion.effective} onOpenSettings={openSettings} />
+            <CompanionScreen pet={settings.pet} onPetChange={pet => preferences.update({ pet })} soundEnabled={settings.soundEnabled} volume={settings.volume} reducedMotion={motion.effective} onOpenSettings={openSettings} />
           )}
           {route === 'breath' && (
             <BreathScreen runtime={runtime} remember={preferences.remember} volume={settings.volume}

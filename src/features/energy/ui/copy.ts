@@ -1,4 +1,4 @@
-import type { Pace, Phase, RepTarget } from '../core/types';
+import type { Pace, Pet, Phase, RepTarget } from '../core/types';
 
 // 所有繁中文案集中於此，方便審稿與禁用字詞測試（ACCEPTANCE T16）。
 export const copy = {
@@ -75,7 +75,9 @@ export const copy = {
   clearSaved: '清除已保存的偏好',
   resetDefaults: '恢復預設值',
   privacy: '不需登入，不蒐集健康資料，也沒有任何追蹤。',
-  catAlt: '橘色虎斑小貓（靜態圖片）',
+  petLabel: '選萌寵',
+  petName: { cat: '小貓', dog: '小狗' } satisfies Record<Pet, string>,
+  petAlt: { cat: '橘色虎斑小貓（靜態圖片）', dog: '奶油金色小狗（靜態圖片）' } satisfies Record<Pet, string>,
 } as const;
 
 function half(p: Pace) { return Number.isInteger(p / 2) ? String(p / 2) : (p / 2).toFixed(1); }

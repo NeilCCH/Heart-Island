@@ -98,3 +98,26 @@ test('萌寵陪伴屋：在頭上滑動摸摸、陪牠休息、手機不水平�
   expect(overflow).toBeLessThanOrEqual(0);
   if (shotDir) await page.screenshot({ path: `${shotDir}/companion-sleep.png` });
 });
+
+test('萌寵陪伴屋：選小狗後摸摸會搖尾巴，選擇也帶到萌寵能量站', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/#companion');
+  await page.getByRole('radio', { name: '小狗' }).check();
+  const room = page.getByRole('img', { name: /小狗/ });
+  await expect(room).toHaveAttribute('aria-label', '小狗坐著，安靜地陪著你。');
+  if (shotDir) await page.screenshot({ path: `${shotDir}/companion-dog.png` });
+  const box = (await room.boundingBox())!;
+  const at = (x: number, y: number) => [box.x + (x / 600) * box.width, box.y + (y / 800) * box.height] as const;
+  await page.mouse.move(...at(270, 345));
+  await page.mouse.down();
+  await page.mouse.move(...at(320, 352), { steps: 8 });
+  await page.mouse.up();
+  await expect(room).toHaveAttribute('aria-label', '小狗瞇起眼睛，開心地搖著尾巴。');
+  if (shotDir) await page.screenshot({ path: `${shotDir}/companion-dog-happy.png` });
+  await page.getByRole('button', { name: '陪牠休息' }).click();
+  await expect(room).toHaveAttribute('aria-label', '小狗睡著了，呼吸慢慢的。');
+  if (shotDir) await page.screenshot({ path: `${shotDir}/companion-dog-sleep.png` });
+  await page.goto('/#energy');
+  await expect(page.getByRole('img', { name: /小狗/ })).toBeVisible();
+  await expect(page.getByRole('radio', { name: '小狗' })).toBeChecked();
+});

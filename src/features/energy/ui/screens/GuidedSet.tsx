@@ -1,6 +1,6 @@
 import type { EnergySettings, GuideView } from '../../core/types';
 import { copy } from '../copy';
-import { CatFigure } from '../components/CatFigure';
+import { PetFigure } from '../components/PetFigure';
 import { PacePicker } from '../components/Pickers';
 import { ProgressBar } from '../components/ProgressBar';
 import { TopBar } from '../components/TopBar';
@@ -17,7 +17,7 @@ export function GuidedSet({ guide, paused, settings, update, wakeLockAvailable, 
       <TopBar onOpenSettings={onOpenSettings} />
       <div className="layout">
         <div className="layout__aside">
-          <CatFigure size="compact" />
+          <PetFigure pet={settings.pet} size="compact" />
         </div>
         <div className="layout__main stack">
           <h1 tabIndex={-1} data-screen-heading className="title title--small">{copy.setIndex(guide.setIndex)}</h1>

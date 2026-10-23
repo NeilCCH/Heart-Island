@@ -10,25 +10,31 @@
 .companion-night { transition: opacity 2.5s ease; }
 
 .rig g { transform-box: view-box; }
-.rig-breath { transform-origin: 190px 430px; animation: rig-breathe 3.6s ease-in-out infinite; }
+.rig-breath { transform-origin: var(--rig-breath-o); animation: rig-breathe 3.6s ease-in-out infinite; }
 .rig--sleep .rig-breath { animation-duration: 5.6s; }
-.rig-stretch { transform-origin: 190px 436px; transition: transform 1.2s ease; }
+.rig-stretch { transform-origin: var(--rig-breath-o); transition: transform 1.2s ease; }
 .rig--sleep .rig-stretch { transform: translateY(8px) scaleY(0.97); }
 .rig--act-stretch .rig-stretch { animation: rig-stretch 1.8s ease-in-out; }
-.rig-head-lean { transform-origin: 195px 268px; transition: transform 0.45s ease; }
-.rig-head { transform-origin: 195px 268px; transition: transform 1.2s ease; }
+.rig-head-lean { transform-origin: var(--rig-head-o); transition: transform 0.45s ease; }
+.rig-head { transform-origin: var(--rig-head-o); transition: transform 1.2s ease; }
 .rig--sleep .rig-head { transform: rotate(6deg) translateY(10px); }
 .rig--act-tilt .rig-head { animation: rig-tilt 1.8s ease-in-out; }
-.rig-tail { transform-origin: 85px 385px; animation: rig-tail 6s ease-in-out infinite alternate; }
+.rig-tail { transform-origin: var(--rig-tail-o); animation: rig-tail 6s ease-in-out infinite alternate; }
 .rig--act-swish .rig-tail { animation: rig-swish 1.8s ease-in-out; }
 .rig--sleep .rig-tail { animation: none; transform: rotate(-4deg); }
-.rig--happy .rig-breath { animation: rig-purr 0.12s linear infinite; }
+.rig--cat.rig--happy .rig-breath { animation: rig-purr 0.12s linear infinite; }
+/* 小狗：開心時快快搖尾巴、輕輕喘氣；伸懶腰換成搖一陣尾巴 */
+.rig--dog .rig-tail { animation-duration: 3.2s; }
+.rig--dog.rig--happy .rig-tail, .rig--dog.rig--act-swish .rig-tail { animation: rig-wag 0.42s ease-in-out infinite alternate; }
+.rig--dog.rig--happy .rig-breath { animation: rig-pant 0.5s ease-in-out infinite; }
 
 @keyframes rig-breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.006, 1.016); } }
 @keyframes rig-purr { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(0.4px, 0.3px); } }
 @keyframes rig-stretch { 0%, 100% { transform: scale(1, 1); } 35% { transform: scale(1.05, 0.93); } 70% { transform: scale(0.97, 1.05); } }
 @keyframes rig-tilt { 0%, 100% { transform: rotate(0); } 40%, 70% { transform: rotate(-8deg); } }
 @keyframes rig-tail { from { transform: rotate(-2deg); } to { transform: rotate(2.5deg); } }
+@keyframes rig-wag { from { transform: rotate(-9deg); } to { transform: rotate(8deg); } }
+@keyframes rig-pant { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.004, 1.012); } }
 @keyframes rig-swish { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-11deg); } 65% { transform: rotate(7deg); } }
 
 .companion-zzz text { font: 700 34px system-ui, sans-serif; fill: #f3f1ff; opacity: 0.85; animation: zzz 3.6s ease-in-out infinite; }

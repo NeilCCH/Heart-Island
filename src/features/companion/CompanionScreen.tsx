@@ -1,6 +1,8 @@
 import { useEffect, useRef, type PointerEvent as ReactPointerEvent } from 'react';
+import type { Pet } from '../energy/core/types';
+import { PetPicker } from '../energy/ui/components/Pickers';
 import { TopBar } from '../energy/ui/components/TopBar';
-import { CatRig, regionAt, type Region } from './CatRig';
+import { PetRig, RIGS, regionAt, type Region } from './PetRig';
 import { companionCopy as copy } from './copy';
 import { useCompanionMood } from './useCompanionMood';
 import { usePurr } from './usePurr';
@@ -10,12 +12,13 @@ const ROOM_W = 600;
 const ROOM_H = 800;
 const LEAN: Record<Exclude<Region, null>, number> = { head: 0, cheekLeft: -6, cheekRight: 6, body: 0 };
 
-// 萌寵陪伴屋：沒有餵食、沒有生病、沒有每日登入；不操作時小貓也會安靜地待著。
-export function CompanionScreen({ soundEnabled, volume, reducedMotion, onOpenSettings, random }: {
-  soundEnabled: boolean; volume: number; reducedMotion: boolean; onOpenSettings: () => void; random?: () => number;
+// 萌寵陪伴屋：沒有餵食、沒有生病、沒有每日登入；不操作時萌寵也會安靜地待著。
+export function CompanionScreen({ pet = 'cat', onPetChange, soundEnabled, volume, reducedMotion, onOpenSettings, random }: {
+  pet?: Pet; onPetChange?: (pet: Pet) => void; soundEnabled: boolean; volume: number; reducedMotion: boolean; onOpenSettings: () => void; random?: () => number;
 }) {
-  const { mood, action, blink, lean, pet, rest, wake } = useCompanionMood(random);
-  const purr = usePurr(soundEnabled, volume);
+  const { mood, action, blink, lean, pet: petOnce, rest, wake } = useCompanionMood(random);
+  const purr = usePurr(soundEnabled, volume, pet === 'dog' ? 'pant' : 'purr');
+  const headX = RIGS[pet].x + RIGS[pet].headArea.cx;
   const roomRef = useRef<SVGSVGElement>(null);
   const strokeRef = useRef<{ pointerId: number; last: number } | null>(null);
 
@@ -25,9 +28,9 @@ export function CompanionScreen({ soundEnabled, volume, reducedMotion, onOpenSet
     const rect = roomRef.current!.getBoundingClientRect();
     return { x: ((event.clientX - rect.left) * ROOM_W) / (rect.width || ROOM_W), y: ((event.clientY - rect.top) * ROOM_H) / (rect.height || ROOM_H) };
   };
-  const touch = (region: Exclude<Region, null>, x = 310) => {
-    const towards = region === 'head' ? (x - 310) / 25 : LEAN[region];
-    pet(towards);
+  const touch = (region: Exclude<Region, null>, x = headX) => {
+    const towards = region === 'head' ? (x - headX) / 25 : LEAN[region];
+    petOnce(towards);
     purr.start();
   };
 
@@ -35,7 +38,7 @@ export function CompanionScreen({ soundEnabled, volume, reducedMotion, onOpenSet
   function onPointerDown(event: ReactPointerEvent<SVGSVGElement>) {
     if (strokeRef.current) return;
     const p = toRoom(event);
-    const region = regionAt(p.x, p.y);
+    const region = regionAt(p.x, p.y, pet);
     if (!region) return;
     strokeRef.current = { pointerId: event.pointerId, last: Date.now() };
     roomRef.current?.setPointerCapture?.(event.pointerId);
@@ -45,12 +48,12 @@ export function CompanionScreen({ soundEnabled, volume, reducedMotion, onOpenSet
     const stroke = strokeRef.current;
     if (!stroke || stroke.pointerId !== event.pointerId || Date.now() - stroke.last < 300) return;
     const p = toRoom(event);
-    const region = regionAt(p.x, p.y);
+    const region = regionAt(p.x, p.y, pet);
     if (!region) return;
     stroke.last = Date.now();
     touch(region, p.x);
   }
-  // 手指離開或手勢被取消時，呼嚕聲立刻淡出（小貓仍會瞇眼一下再回到平常）。
+  // 手指離開或手勢被取消時，聲音立刻淡出（萌寵仍會瞇眼一下再回到平常）。
   function onPointerUp(event: ReactPointerEvent<SVGSVGElement>) {
     if (strokeRef.current?.pointerId !== event.pointerId) return;
     strokeRef.current = null;
@@ -63,7 +66,7 @@ export function CompanionScreen({ soundEnabled, volume, reducedMotion, onOpenSet
       <TopBar label={copy.title} onOpenSettings={onOpenSettings} />
       <h1 tabIndex={-1} data-screen-heading className="sr-only">{copy.title}</h1>
       <svg ref={roomRef} className={`companion-room${reducedMotion ? ' companion-room--still' : ''}`} viewBox={`0 0 ${ROOM_W} ${ROOM_H}`}
-        role="img" aria-label={copy.state[mood]}
+        role="img" aria-label={copy.state[pet][mood]}
         onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}>
         <defs>
           <linearGradient id="room-wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#f3e9de" /><stop offset="1" stopColor="#e9d9c8" /></linearGradient>
@@ -91,7 +94,7 @@ export function CompanionScreen({ soundEnabled, volume, reducedMotion, onOpenSet
         <ellipse cx="290" cy="716" rx="150" ry="22" fill="#d6e0ee" opacity="0.6" />
         <rect width={ROOM_W} height="560" fill="url(#room-light)" pointerEvents="none" />
 
-        <CatRig mood={mood} action={action} blink={blink} lean={lean} />
+        <PetRig pet={pet} mood={mood} action={action} blink={blink} lean={lean} />
 
         {sleeping && (
           <g className="companion-zzz" aria-hidden="true">
@@ -100,7 +103,8 @@ export function CompanionScreen({ soundEnabled, volume, reducedMotion, onOpenSet
         )}
         <rect className="companion-night" width={ROOM_W} height={ROOM_H} fill="#1d2a4a" opacity={sleeping ? 0.32 : 0} pointerEvents="none" />
       </svg>
-      <p className="muted small companion-hint">{copy.hint}</p>
+      <p className="muted small companion-hint">{copy.hint[pet]}</p>
+      {onPetChange && <PetPicker value={pet} update={partial => { if (partial.pet) onPetChange(partial.pet); }} />}
 
       <div className="controls">
         <button type="button" className="btn" onClick={() => touch('head')}>{copy.petHead}</button>
