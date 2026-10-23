@@ -81,7 +81,7 @@ export function TinyScreen({ onOpenSettings, random = Math.random }: { onOpenSet
       <h1 tabIndex={-1} data-screen-heading className="title title--small">{copy.title}</h1>
       <p className="feature__intro">{copy.intro}</p>
 
-      <section className="tiny-card" aria-live="polite" aria-atomic="true">
+      <section className="tiny-card" data-category={acknowledged ? 'done' : current.category} aria-live="polite" aria-atomic="true">
         {acknowledged ? (
           <>
             <p className="tiny-card__text">{copy.ack}</p>

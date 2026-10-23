@@ -1,7 +1,7 @@
 /* 療癒小花園：直式沙盤配合手機畫面；木框、沙、池塘是場景本身（兩種主題相同） */
 .garden { gap: 10px; }
 .garden-stage {
-  position: relative; margin: 0 auto;
+  position: relative; margin: 0 auto; align-self: center;
   width: max(min(100%, 280px), min(100%, calc((100dvh - 220px) * 900 / 1400)));
   max-width: 100%; aspect-ratio: 900 / 1400;
   border-radius: 18px; overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none;

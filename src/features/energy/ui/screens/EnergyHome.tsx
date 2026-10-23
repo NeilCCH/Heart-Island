@@ -12,7 +12,7 @@ export function EnergyHome({ settings, update, onStart, onOpenSettings }: {
     <div className="screen screen--home">
       <TopBar label="心靈小島" onOpenSettings={onOpenSettings} />
       <div className="layout">
-        <div className="layout__aside">
+        <div className="layout__aside pet-stage">
           <PetFigure pet={settings.pet} />
         </div>
         <div className="layout__main stack">
@@ -23,11 +23,14 @@ export function EnergyHome({ settings, update, onStart, onOpenSettings }: {
             <p>{copy.safety}</p>
             <p className="muted">{copy.safetyExtra}</p>
           </section>
-          <p className="muted">{copy.countNote}</p>
-          <PetPicker value={settings.pet} update={update} />
-          <TargetPicker value={settings.target} update={update} />
-          <PacePicker value={settings.pace} update={update} />
-          <RestPicker value={settings.restSeconds} update={update} />
+          <section className="card stack" aria-label={copy.setupTitle}>
+            <h2 className="card__title">{copy.setupTitle}</h2>
+            <PetPicker value={settings.pet} update={update} />
+            <TargetPicker value={settings.target} update={update} />
+            <PacePicker value={settings.pace} update={update} />
+            <RestPicker value={settings.restSeconds} update={update} />
+          </section>
+          <p className="muted small">{copy.countNote}</p>
           <div className="controls">
             <button type="button" className="btn btn--primary btn--wide" onClick={onStart}>{copy.start}</button>
           </div>

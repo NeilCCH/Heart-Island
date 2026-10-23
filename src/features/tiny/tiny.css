@@ -29,3 +29,18 @@ a.btn { display: inline-flex; align-items: center; justify-content: center; text
 .tiny-today { padding: 12px 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
 .tiny-today summary { cursor: pointer; font-weight: 600; min-height: 32px; }
 .tiny-today ul { margin: 8px 0; padding-left: 1.2em; }
+
+/* 卡片依類別帶一點柔和的顏色，左側一條色帶；做完時是安靜的綠 */
+.tiny-card {
+  position: relative; overflow: hidden; min-height: 210px; border: 1px solid var(--card-border); box-shadow: var(--shadow-strong);
+  background: var(--surface);
+  background: linear-gradient(150deg, color-mix(in srgb, var(--hue, var(--progress)) 16%, var(--surface)), var(--surface) 65%);
+}
+.tiny-card { border-left: 6px solid color-mix(in srgb, var(--hue, var(--progress)) 70%, var(--surface)); }
+.tiny-card .tag { background: color-mix(in srgb, var(--hue, var(--progress)) 20%, var(--surface)); color: var(--text); font-weight: 600; }
+.tiny-card[data-category="body"] { --hue: #c27c62; } .tiny-card[data-category="senses"] { --hue: #b08b55; }
+.tiny-card[data-category="space"] { --hue: #5f9479; } .tiny-card[data-category="sound"] { --hue: #5b6fae; }
+.tiny-card[data-category="rest"] { --hue: #8a78b6; } .tiny-card[data-category="connect"] { --hue: #c07a96; }
+.tiny-card[data-category="mine"] { --hue: #6b8fb0; } .tiny-card[data-category="done"] { --hue: #5f9479; }
+.tiny-list { border: 1px solid var(--card-border); }
+.tiny-item__pick { box-shadow: 0 1px 2px rgb(27 42 68 / 0.04); }

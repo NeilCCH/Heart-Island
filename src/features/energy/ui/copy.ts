@@ -8,6 +8,7 @@ export const copy = {
   safety: '不需要勉強跟上；感到頭暈、胸痛、呼吸困難或明顯不適時，請停止並尋求適當協助。',
   safetyExtra: '節奏只供參考，不是醫療或運動處方；請以舒適呼吸與正確動作為先，不用一直盯著螢幕。',
   countNote: '這裡記的是「引導播放了幾次」，不是你實際做了幾下。我沒有跟上也沒關係。',
+  setupTitle: '這一組的設定',
   targetLabel: '每組引導次數',
   paceLabel: '引導節奏',
   restLabel: '組間休息',

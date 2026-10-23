@@ -151,6 +151,9 @@ describe('萌寵能量站 UI', () => {
     click(copy.rest(30));
     expect(heading().textContent).toBe(copy.restTitle);
     expect(screen.getByRole('timer').textContent).toBe('0:30');
+    // 倒數不在進度圓環裡，螢幕閱讀器各自讀得到
+    expect(screen.getByRole('progressbar', { name: '休息進度' }).contains(screen.getByRole('timer'))).toBe(false);
+    expect(screen.getByRole('progressbar', { name: '休息進度' }).getAttribute('aria-valuetext')).toBe('休息剩餘 30 秒');
     advance(10000);
     click(copy.pause); advance(20000);
     expect(screen.getByRole('timer').textContent).toBe('0:20');
