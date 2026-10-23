@@ -95,30 +95,19 @@ export function CompanionScreen({ pet = 'cat', onPetChange, soundEnabled, volume
         role="img" aria-label={delight ? copy.delight[pet] : copy.state[pet][mood]}
         onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}>
         <defs>
-          <linearGradient id="room-wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#f3e9de" /><stop offset="1" stopColor="#e9d9c8" /></linearGradient>
-          <linearGradient id="room-floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#d8c2a5" /><stop offset="1" stopColor="#c9ae8d" /></linearGradient>
-          <linearGradient id="room-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#cfe0ef" /><stop offset="1" stopColor="#eef4f8" /></linearGradient>
+          {/* 無縫背景：沒有牆、窗戶與掛畫，只有由上而下的霧白到藍灰，地面附近稍微暖一點 */}
+          <linearGradient id="room-bg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#eef2f7" /><stop offset="0.62" stopColor="#e3e9f1" /><stop offset="1" stopColor="#d3dce8" />
+          </linearGradient>
+          <radialGradient id="room-glow" cx="50%" cy="58%" r="55%"><stop offset="0" stopColor="#fffaf2" stopOpacity="0.85" /><stop offset="1" stopColor="#fffaf2" stopOpacity="0" /></radialGradient>
           <radialGradient id="room-cushion" cx="45%" cy="40%"><stop offset="0" stopColor="#c9d6e8" /><stop offset="1" stopColor="#8fa3c0" /></radialGradient>
-          <radialGradient id="room-light" cx="50%" cy="0%" r="90%"><stop offset="0" stopColor="#fff8ec" stopOpacity="0.7" /><stop offset="1" stopColor="#fff8ec" stopOpacity="0" /></radialGradient>
+          <radialGradient id="room-shadow"><stop offset="0" stopColor="#3c4a64" stopOpacity="0.22" /><stop offset="1" stopColor="#3c4a64" stopOpacity="0" /></radialGradient>
         </defs>
-        <rect width={ROOM_W} height="560" fill="url(#room-wall)" />
-        {/* 窗戶與窗簾 */}
-        <rect x="350" y="70" width="190" height="230" rx="14" fill="url(#room-sky)" stroke="#c6b29b" strokeWidth="8" />
-        <line x1="445" y1="70" x2="445" y2="300" stroke="#c6b29b" strokeWidth="5" />
-        <line x1="350" y1="185" x2="540" y2="185" stroke="#c6b29b" strokeWidth="5" />
-        {sleeping && <circle cx="500" cy="115" r="18" fill="#fdf4d8" opacity="0.9" />}
-        <path d="M335 60 Q 360 190 345 315 L 372 315 Q 382 190 368 60 Z" fill="#e9d5d1" opacity="0.9" />
-        <path d="M555 60 Q 530 190 545 315 L 518 315 Q 508 190 522 60 Z" fill="#e9d5d1" opacity="0.9" />
-        {/* 牆上的小畫與植物 */}
-        <rect x="70" y="110" width="120" height="90" rx="6" fill="#f8f2ea" stroke="#c6b29b" strokeWidth="6" />
-        <path d="M82 190 Q 110 140 130 165 Q 150 130 178 190 Z" fill="#a8b7cc" />
-        <rect y="550" width={ROOM_W} height="250" fill="url(#room-floor)" />
-        <rect y="546" width={ROOM_W} height="10" fill="#bfa383" />
-        <ellipse cx="300" cy="720" rx="250" ry="62" fill="#e5d6c2" opacity="0.8" />
-        <ellipse cx="300" cy="745" rx="205" ry="40" fill="rgba(60,40,20,0.16)" />
+        <rect width={ROOM_W} height={ROOM_H} fill="url(#room-bg)" />
+        <ellipse cx="300" cy="470" rx="330" ry="360" fill="url(#room-glow)" pointerEvents="none" />
+        <ellipse cx="300" cy="748" rx="260" ry="46" fill="url(#room-shadow)" />
         <ellipse cx="300" cy="728" rx="200" ry="42" fill="url(#room-cushion)" />
         <ellipse cx="290" cy="716" rx="150" ry="22" fill="#d6e0ee" opacity="0.6" />
-        <rect width={ROOM_W} height="560" fill="url(#room-light)" pointerEvents="none" />
 
         <PetRig pet={pet} mood={mood} action={action} blink={blink} lean={lean} reaction={reaction} delight={delight} />
 

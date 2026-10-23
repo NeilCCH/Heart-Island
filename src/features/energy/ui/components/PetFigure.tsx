@@ -5,9 +5,10 @@ import { copy } from '../copy';
 // 依部署路徑組合（Vercel 根目錄或預覽子路徑皆可）。
 export const CAT_SRC = `${import.meta.env.BASE_URL}assets/cat/cutout.png`;
 export const DOG_SRC = `${import.meta.env.BASE_URL}assets/dog/cutout.webp`;
-export const PET_IMAGE: Record<Pet, { src: string; width: number; height: number }> = {
-  cat: { src: CAT_SRC, width: 361, height: 436 },
-  dog: { src: DOG_SRC, width: 373, height: 436 },
+// lids：閉眼時疊在眼睛上的毛色層（萌寵陪伴屋用）
+export const PET_IMAGE: Record<Pet, { src: string; lids: string; width: number; height: number }> = {
+  cat: { src: CAT_SRC, lids: `${import.meta.env.BASE_URL}assets/cat/lids.webp`, width: 361, height: 436 },
+  dog: { src: DOG_SRC, lids: `${import.meta.env.BASE_URL}assets/dog/lids.webp`, width: 373, height: 436 },
 };
 
 export function PetFigure({ pet = 'cat', size = 'regular' }: { pet?: Pet; size?: 'regular' | 'compact' }) {

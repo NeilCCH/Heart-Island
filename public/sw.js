@@ -1,7 +1,7 @@
 // 小貓能量站離線快取：不追蹤、不上傳，只快取本站檔案。
 // 版本號變更時清除舊快取；部署新版時 index.html 走網路優先，打包檔名含雜湊可放心快取。
-const CACHE = 'kitten-energy-v2';
-const SHELL = ['./', 'manifest.webmanifest', 'assets/cat/cutout.png', 'assets/dog/cutout.webp', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
+const CACHE = 'kitten-energy-v3';
+const SHELL = ['./', 'manifest.webmanifest', 'assets/cat/cutout.png', 'assets/dog/cutout.webp', 'assets/cat/lids.webp', 'assets/dog/lids.webp', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
 
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
