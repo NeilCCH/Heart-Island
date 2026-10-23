@@ -2,6 +2,7 @@ import { useEffect, useRef, type KeyboardEvent } from 'react';
 import type { EnergySettings } from '../../core/types';
 import { copy } from '../copy';
 import { OptionGroup } from '../components/OptionGroup';
+import { TouchRange } from '../components/TouchRange';
 
 type Theme = EnergySettings['theme'];
 const themeOptions = (['system', 'light', 'dark'] as const).map(value => ({ value, label: copy.themeName[value] }));
@@ -49,9 +50,9 @@ export function SettingsSheet({ settings, update, remember, setRemember, clearSa
           </div>
           <div className="field field--row">
             <label htmlFor="energy-volume">{copy.volumeLabel}</label>
-            <input id="energy-volume" type="range" min={0} max={1} step={0.1} value={settings.volume}
+            <TouchRange id="energy-volume" min={0} max={1} step={0.1} value={settings.volume}
               disabled={!settings.soundEnabled} aria-valuetext={`${Math.round(settings.volume * 100)}%`}
-              onChange={event => update({ volume: Number(event.target.value) })} />
+              onValue={volume => update({ volume })} />
             <button type="button" className="btn btn--small" disabled={!settings.soundEnabled} onClick={onTestSound}>{copy.testSound}</button>
           </div>
           <div className="field">

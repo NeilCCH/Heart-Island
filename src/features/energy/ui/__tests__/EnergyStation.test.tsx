@@ -123,6 +123,20 @@ describe('萌寵能量站 UI', () => {
     expect(screen.getByText('已引導 2 次')).toBeTruthy();
   });
 
+  it('奇數秒節奏：剩餘秒數從 4.5 開始倒數，不會顯示比這一段還長的 5 秒', () => {
+    const { advance, click, setPace } = setup();
+    setPace(9); click(copy.start);
+    expect(screen.getByText(copy.phaseRemaining(4.5))).toBeTruthy();
+    advance(600);
+    expect(screen.getByText(copy.phaseRemaining(4))).toBeTruthy();
+    advance(3400);
+    expect(screen.getByText(copy.phaseRemaining(1))).toBeTruthy();
+    advance(500);
+    expect(screen.getByText(copy.phase.inhaleLower)).toBeTruthy();
+    expect(screen.getByText(copy.phaseRemaining(4.5))).toBeTruthy();
+    expect(screen.queryByText(copy.phaseRemaining(5))).toBeNull();
+  });
+
   it('首頁節奏滑桿可選任意整數秒，奇數秒顯示半秒', () => {
     const { setPace } = setup();
     setPace(7);

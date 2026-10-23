@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useId, useState, type CSSProperties } from 'react';
 import type { EnergyRuntimeDependencies } from '../energy/core/types';
 import { OptionGroup } from '../energy/ui/components/OptionGroup';
+import { TouchRange } from '../energy/ui/components/TouchRange';
+import { copy as energyCopy } from '../energy/ui/copy';
 import { TopBar } from '../energy/ui/components/TopBar';
 import { useWakeLock } from '../energy/ui/hooks/useWakeLock';
 import { BREATH_DEFAULT, BREATH_MAX, BREATH_MIN, breathAt, phaseSeconds, type Ratio } from './breathMath';
@@ -99,8 +101,8 @@ export function BreathScreen({ runtime, remember, volume, reducedMotion, onOpenS
               <label htmlFor={sliderId} className="options__legend">{copy.paceLabel}</label>
               <output htmlFor={sliderId} className="pace__value">{copy.paceValue(prefs.pace)}</output>
             </div>
-            <input id={sliderId} className="pace__range" type="range" min={BREATH_MIN} max={BREATH_MAX} step={1} value={prefs.pace}
-              aria-valuetext={copy.paceSpoken(prefs.pace, split.inhale, split.exhale)} onChange={event => update({ pace: Number(event.target.value) })} />
+            <TouchRange id={sliderId} className="pace__range" min={BREATH_MIN} max={BREATH_MAX} step={1} value={prefs.pace}
+              aria-valuetext={copy.paceSpoken(prefs.pace, split.inhale, split.exhale)} onValue={pace => update({ pace })} steps={energyCopy.paceSteps} />
             <div className="pace__scale" aria-hidden="true"><span>{BREATH_MIN} 秒・{copy.fast}</span><span>{BREATH_MAX} 秒・{copy.slow}</span></div>
             <p className="muted small">{copy.paceSplit(split.inhale, split.exhale)}</p>
           </div>
