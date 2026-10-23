@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fakeRuntime } from '../../tests/fakeRuntime';
 import { EnergyStation } from '../EnergyStation';
 import { BANNED_WORDS, copy } from '../copy';
-import { CAT_SRC } from '../components/CatFigure';
+import { CAT_SRC, DOG_SRC } from '../components/PetFigure';
 
 beforeEach(() => {
   const values = new Map<string, string>();
@@ -29,16 +29,24 @@ function setup() {
 const heading = () => screen.getByRole('heading', { level: 1 });
 const announcer = () => screen.getByTestId('announcer').textContent?.replace(/​/g, '');
 
-describe('小貓能量站 UI', () => {
+describe('萌寵能量站 UI', () => {
   it('首頁有安全說明、示範標示、次數語意及原始小貓素材', () => {
     setup();
     expect(heading().textContent).toBe(copy.title);
     expect(screen.getByText(copy.safety)).toBeTruthy();
     expect(screen.getByText(copy.demoLabel)).toBeTruthy();
     expect(screen.getByText(copy.countNote)).toBeTruthy();
-    const img = screen.getByRole('img', { name: copy.catAlt }) as HTMLImageElement;
+    const img = screen.getByRole('img', { name: copy.petAlt.cat }) as HTMLImageElement;
     expect(img.getAttribute('src')).toBe(CAT_SRC);
     expect(document.querySelectorAll('img')).toHaveLength(1);
+  });
+
+  it('選萌寵：換成小狗後，引導畫面也用小狗', () => {
+    const { click, choose } = setup();
+    choose(copy.petLabel, copy.petName.dog);
+    expect((screen.getByRole('img', { name: copy.petAlt.dog }) as HTMLImageElement).getAttribute('src')).toBe(DOG_SRC);
+    click(copy.start);
+    expect(screen.getByRole('img', { name: copy.petAlt.dog })).toBeTruthy();
   });
 
   it('完整循環才加1，半循環不加；換畫面焦點移到標題', () => {

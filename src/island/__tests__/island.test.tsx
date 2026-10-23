@@ -31,12 +31,11 @@ const goTo = (name: string) => act(() => {
 });
 
 describe('心靈小島首頁', () => {
-  it('列出五個地方：已開放的可進入，準備中的不能點', () => {
+  it('列出五個地方，全部都可以進入', () => {
     setup();
     expect(heading().textContent).toBe('心靈小島');
-    for (const name of ['呼吸小宇宙', '今天一點點', '療癒小花園', '小貓能量站']) expect(screen.getByRole('link', { name: new RegExp(name) })).toBeTruthy();
-    expect(screen.queryByRole('link', { name: /小貓陪伴屋/ })).toBeNull();
-    expect(screen.getAllByText('準備中')).toHaveLength(1);
+    for (const name of ['呼吸小宇宙', '今天一點點', '療癒小花園', '萌寵能量站', '萌寵陪伴屋']) expect(screen.getByRole('link', { name: new RegExp(name) })).toBeTruthy();
+    expect(screen.queryByText('準備中')).toBeNull();
   });
 
   it('進入功能後焦點移到標題，「回小島」返回首頁', () => {
@@ -48,21 +47,21 @@ describe('心靈小島首頁', () => {
     expect(heading().textContent).toBe('心靈小島');
   });
 
-  it('進入小貓能量站時焦點也移到它的標題', () => {
+  it('進入萌寵能量站時焦點也移到它的標題', () => {
     setup();
-    goTo('小貓能量站');
-    expect(heading().textContent).toBe('小貓能量站');
+    goTo('萌寵能量站');
+    expect(heading().textContent).toBe('萌寵能量站');
     expect(document.activeElement).toBe(heading());
   });
 
-  it('小貓能量站在小島中可返回，且共用設定（深色主題套用到全島）', () => {
+  it('萌寵能量站在小島中可返回，且共用設定（深色主題套用到全島）', () => {
     setup();
     act(() => { fireEvent.click(screen.getByRole('button', { name: '設定' })); });
     act(() => { fireEvent.click(within(screen.getByRole('dialog')).getByRole('radio', { name: /深色/ })); });
     expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
     act(() => { fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Escape' }); });
-    goTo('小貓能量站');
-    expect(heading().textContent).toBe('小貓能量站');
+    goTo('萌寵能量站');
+    expect(heading().textContent).toBe('萌寵能量站');
     expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
     act(() => { fireEvent.click(screen.getByRole('button', { name: '← 回小島' })); });
     expect(heading().textContent).toBe('心靈小島');

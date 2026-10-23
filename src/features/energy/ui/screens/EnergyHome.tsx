@@ -1,7 +1,7 @@
 import type { EnergySettings } from '../../core/types';
 import { copy } from '../copy';
-import { CatFigure } from '../components/CatFigure';
-import { PacePicker, RestPicker, TargetPicker } from '../components/Pickers';
+import { PetFigure } from '../components/PetFigure';
+import { PacePicker, PetPicker, RestPicker, TargetPicker } from '../components/Pickers';
 import { TopBar } from '../components/TopBar';
 
 export function EnergyHome({ settings, update, onStart, onOpenSettings }: {
@@ -13,7 +13,7 @@ export function EnergyHome({ settings, update, onStart, onOpenSettings }: {
       <TopBar label="心靈小島" onOpenSettings={onOpenSettings} />
       <div className="layout">
         <div className="layout__aside">
-          <CatFigure />
+          <PetFigure pet={settings.pet} />
         </div>
         <div className="layout__main stack">
           <h1 tabIndex={-1} data-screen-heading className="title">{copy.title}</h1>
@@ -24,6 +24,7 @@ export function EnergyHome({ settings, update, onStart, onOpenSettings }: {
             <p className="muted">{copy.safetyExtra}</p>
           </section>
           <p className="muted">{copy.countNote}</p>
+          <PetPicker value={settings.pet} update={update} />
           <TargetPicker value={settings.target} update={update} />
           <PacePicker value={settings.pace} update={update} />
           <RestPicker value={settings.restSeconds} update={update} />

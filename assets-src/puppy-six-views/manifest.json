@@ -1,0 +1,50 @@
+[
+  {
+    "file": "images/01_front.png",
+    "view": "正面",
+    "width": 1342,
+    "height": 1172,
+    "transparent_pixels": 772392,
+    "partial_alpha_pixels": 800423
+  },
+  {
+    "file": "images/02_three_quarter.png",
+    "view": "左前45度",
+    "width": 1343,
+    "height": 1171,
+    "transparent_pixels": 797578,
+    "partial_alpha_pixels": 775072
+  },
+  {
+    "file": "images/03_left_side.png",
+    "view": "左側面，鼻朝左",
+    "width": 1342,
+    "height": 1172,
+    "transparent_pixels": 762095,
+    "partial_alpha_pixels": 810715
+  },
+  {
+    "file": "images/04_right_side.png",
+    "view": "右側面，鼻朝右",
+    "width": 1355,
+    "height": 1160,
+    "transparent_pixels": 866610,
+    "partial_alpha_pixels": 705072
+  },
+  {
+    "file": "images/05_back.png",
+    "view": "背面",
+    "width": 1357,
+    "height": 1159,
+    "transparent_pixels": 834393,
+    "partial_alpha_pixels": 738356
+  },
+  {
+    "file": "images/06_top.png",
+    "view": "俯視高角度",
+    "width": 1356,
+    "height": 1160,
+    "transparent_pixels": 830907,
+    "partial_alpha_pixels": 742048
+  }
+]

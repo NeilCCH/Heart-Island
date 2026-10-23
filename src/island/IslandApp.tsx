@@ -11,13 +11,14 @@ import { SettingsSheet } from '../features/energy/ui/screens/SettingsSheet';
 import { BreathScreen, clearBreathPrefs } from '../features/breath/BreathScreen';
 import { TinyScreen } from '../features/tiny/TinyScreen';
 import { GardenScreen } from '../features/garden/GardenScreen';
+import { CompanionScreen } from '../features/companion/CompanionScreen';
 import { IslandHome } from './IslandHome';
 import { useHashRoute, type Route } from './useHashRoute';
 import '../features/energy/ui/styles/energy.css';
 import './island.css';
 
-// 目前開放的地方；小貓陪伴屋完成後再加入。
-const AVAILABLE: readonly Route[] = ['home', 'breath', 'tiny', 'garden', 'energy'];
+// 目前開放的地方。
+const AVAILABLE: readonly Route[] = ['home', 'breath', 'tiny', 'garden', 'energy', 'companion'];
 
 // 心靈小島根元件：一份共用偏好（聲音、音量、減少動態、主題、記住偏好），各功能共用。
 export function IslandApp({ runtime: injected }: { runtime?: EnergyRuntimeDependencies }) {
@@ -56,16 +57,19 @@ export function IslandApp({ runtime: injected }: { runtime?: EnergyRuntimeDepend
     mainRef.current?.querySelector<HTMLElement>('[data-screen-heading]')?.focus();
   }, [route]);
 
-  // 小貓能量站自帶版面與設定；仍包在 mainRef 內，讓上方的焦點 effect 能找到它的標題。
+  // 萌寵能量站自帶版面與設定；仍包在 mainRef 內，讓上方的焦點 effect 能找到它的標題。
   if (route === 'energy') return <div ref={mainRef}><EnergyStation preferences={preferences} onBack={back} runtime={injected} /></div>;
 
   return (
     <div className="energy">
       <div ref={mainRef} className="energy__main" inert={settingsOpen}>
         <BackContext.Provider value={route === 'home' ? null : back}>
-          {route === 'home' && <IslandHome available={AVAILABLE} onOpenSettings={openSettings} />}
+          {route === 'home' && <IslandHome available={AVAILABLE} pet={settings.pet} onOpenSettings={openSettings} />}
           {route === 'tiny' && <TinyScreen onOpenSettings={openSettings} />}
           {route === 'garden' && <GardenScreen onOpenSettings={openSettings} reducedMotion={motion.effective} />}
+          {route === 'companion' && (
+            <CompanionScreen pet={settings.pet} onPetChange={pet => preferences.update({ pet })} soundEnabled={settings.soundEnabled} volume={settings.volume} reducedMotion={motion.effective} onOpenSettings={openSettings} />
+          )}
           {route === 'breath' && (
             <BreathScreen runtime={runtime} remember={preferences.remember} volume={settings.volume}
               reducedMotion={motion.effective} onOpenSettings={openSettings} />

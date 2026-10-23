@@ -1,9 +1,9 @@
-import type { Pace, Phase, RepTarget } from '../core/types';
+import type { Pace, Pet, Phase, RepTarget } from '../core/types';
 
 // 所有繁中文案集中於此，方便審稿與禁用字詞測試（ACCEPTANCE T16）。
 export const copy = {
-  title: '小貓能量站',
-  intro: '看著小貓，跟著柔和的節奏，把注意力放在呼吸和動作上，讓心情換個地方休息一下。',
+  title: '萌寵能量站',
+  intro: '看著萌寵，跟著柔和的節奏，把注意力放在呼吸和動作上，讓心情換個地方休息一下。',
   demoLabel: '示範：啞鈴彎舉／一般輕量動作',
   safety: '不需要勉強跟上；感到頭暈、胸痛、呼吸困難或明顯不適時，請停止並尋求適當協助。',
   safetyExtra: '節奏只供參考，不是醫療或運動處方；請以舒適呼吸與正確動作為先，不用一直盯著螢幕。',
@@ -75,7 +75,9 @@ export const copy = {
   clearSaved: '清除已保存的偏好',
   resetDefaults: '恢復預設值',
   privacy: '不需登入，不蒐集健康資料，也沒有任何追蹤。',
-  catAlt: '橘色虎斑小貓（靜態圖片）',
+  petLabel: '選萌寵',
+  petName: { cat: '小貓', dog: '小狗' } satisfies Record<Pet, string>,
+  petAlt: { cat: '橘色虎斑小貓（靜態圖片）', dog: '奶油金色小狗（靜態圖片）' } satisfies Record<Pet, string>,
 } as const;
 
 function half(p: Pace) { return Number.isInteger(p / 2) ? String(p / 2) : (p / 2).toFixed(1); }

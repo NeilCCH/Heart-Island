@@ -22,3 +22,9 @@ it('舊版固定節奏名稱轉為秒數，範圍外回預設', () => {
   const storage = memory(); storage.setItem(SETTINGS_KEY, JSON.stringify({ version:1, settings:{ pace: 30 } }));
   expect(createPreferenceStore(() => storage).getSnapshot().settings.pace).toBe(6);
 });
+it('萌寵選擇：只接受小貓或小狗，其他回預設小貓', () => {
+  for (const [pet, expected] of [['dog', 'dog'], ['cat', 'cat'], ['hamster', 'cat'], [undefined, 'cat']] as const) {
+    const storage = memory(); storage.setItem(SETTINGS_KEY, JSON.stringify({ version:1, settings:{ pet } }));
+    expect(createPreferenceStore(() => storage).getSnapshot().settings.pet).toBe(expected);
+  }
+});

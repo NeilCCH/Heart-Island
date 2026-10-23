@@ -1,7 +1,7 @@
 import type { EnergySettings } from '../core/types';
 import { DEFAULT_PACE, normalizePace } from '../core/machine';
 export const SETTINGS_KEY = 'energy.settings.v1';
-export const DEFAULT_SETTINGS: EnergySettings = { pace: DEFAULT_PACE, target: 10, restSeconds: 90, soundEnabled: false, volume: 0.5, reducedMotion: false, theme: 'system' };
+export const DEFAULT_SETTINGS: EnergySettings = { pace: DEFAULT_PACE, target: 10, restSeconds: 90, soundEnabled: false, volume: 0.5, reducedMotion: false, theme: 'system', pet: 'cat' };
 export function validateSettings(raw: unknown): EnergySettings {
   const s = raw && typeof raw === 'object' ? raw as Record<string, unknown> : {};
   const result = { ...DEFAULT_SETTINGS };
@@ -12,6 +12,7 @@ export function validateSettings(raw: unknown): EnergySettings {
   if (typeof s.soundEnabled === 'boolean') result.soundEnabled = s.soundEnabled;
   if (typeof s.reducedMotion === 'boolean') result.reducedMotion = s.reducedMotion;
   if (s.theme === 'light' || s.theme === 'dark' || s.theme === 'system') result.theme = s.theme;
+  if (s.pet === 'cat' || s.pet === 'dog') result.pet = s.pet;
   return result;
 }
 export interface PreferenceSnapshot { settings: EnergySettings; remember: boolean; storageError: string | null }

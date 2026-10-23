@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import type { EnergySettings, Pace, RepTarget } from '../../core/types';
+import type { EnergySettings, Pace, Pet, RepTarget } from '../../core/types';
 import { PACE_MAX, PACE_MIN } from '../../core/machine';
 import { copy } from '../copy';
 import { OptionGroup, type Option } from './OptionGroup';
@@ -9,6 +9,9 @@ const RESTS: readonly EnergySettings['restSeconds'][] = [30, 60, 90, 120, 180];
 
 const targetOptions: Option<RepTarget>[] = TARGETS.map(t => ({ value: t, label: copy.targetOption(t) }));
 const restOptions: Option<EnergySettings['restSeconds']>[] = RESTS.map(s => ({ value: s, label: copy.restSeconds(s) }));
+
+const PETS: readonly Pet[] = ['cat', 'dog'];
+const petOptions: Option<Pet>[] = PETS.map(p => ({ value: p, label: copy.petName[p] }));
 
 type Update = (partial: Partial<EnergySettings>) => void;
 
@@ -38,4 +41,8 @@ export function PacePicker({ value, update, hint = copy.paceHint }: { value: Pac
 
 export function RestPicker({ value, update, compact }: { value: EnergySettings['restSeconds']; update: Update; compact?: boolean }) {
   return <OptionGroup legend={copy.restLabel} options={restOptions} value={value} onChange={restSeconds => update({ restSeconds })} compact={compact} />;
+}
+
+export function PetPicker({ value, update }: { value: Pet; update: Update }) {
+  return <OptionGroup legend={copy.petLabel} options={petOptions} value={value} onChange={pet => update({ pet })} compact />;
 }

@@ -1,4 +1,5 @@
-import { CatFigure } from '../features/energy/ui/components/CatFigure';
+import type { Pet } from '../features/energy/core/types';
+import { PetFigure } from '../features/energy/ui/components/PetFigure';
 import { TopBar } from '../features/energy/ui/components/TopBar';
 import { islandCopy } from './copy';
 import type { Route } from './useHashRoute';
@@ -18,12 +19,12 @@ function Glyph({ place }: { place: Place }) {
   }
 }
 
-export function IslandHome({ available, onOpenSettings }: { available: readonly Route[]; onOpenSettings: () => void }) {
+export function IslandHome({ available, pet, onOpenSettings }: { available: readonly Route[]; pet: Pet; onOpenSettings: () => void }) {
   return (
     <div className="screen screen--island">
       <TopBar label="" onOpenSettings={onOpenSettings} />
       <div className="island-hero">
-        <CatFigure size="compact" />
+        <PetFigure pet={pet} size="compact" />
         <div className="stack">
           <h1 tabIndex={-1} data-screen-heading className="title">{islandCopy.title}</h1>
           <p className="lead">{islandCopy.intro}</p>
