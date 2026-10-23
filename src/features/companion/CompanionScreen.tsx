@@ -1,26 +1,49 @@
-import { useEffect, useRef, type PointerEvent as ReactPointerEvent } from 'react';
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import type { Pet } from '../energy/core/types';
 import { PetPicker } from '../energy/ui/components/Pickers';
 import { TopBar } from '../energy/ui/components/TopBar';
 import { PetRig, RIGS, regionAt, type Region } from './PetRig';
 import { companionCopy as copy } from './copy';
-import { useCompanionMood } from './useCompanionMood';
+import { useCompanionMood, type Touch } from './useCompanionMood';
 import { usePurr } from './usePurr';
 import './companion.css';
 
 const ROOM_W = 600;
 const ROOM_H = 800;
 const LEAN: Record<Exclude<Region, null>, number> = { head: 0, cheekLeft: -6, cheekRight: 6, body: 0 };
+const TOUCH: Record<Exclude<Region, null>, Touch> = { head: 'head', cheekLeft: 'cheek', cheekRight: 'cheek', body: 'body' };
+const SPARK_MS = 1_500;
+const MAX_SPARKS = 8;
+interface Spark { id: number; x: number; y: number; drift: number; big: boolean }
+
+// 小小的愛心形狀，中心在 (0,0)
+const HEART = 'M0 6 C -9 -1 -9 -9 -4 -10 C -1 -10.5 0 -8 0 -6.5 C 0 -8 1 -10.5 4 -10 C 9 -9 9 -1 0 6 Z';
 
 // 萌寵陪伴屋：沒有餵食、沒有生病、沒有每日登入；不操作時萌寵也會安靜地待著。
 export function CompanionScreen({ pet = 'cat', onPetChange, soundEnabled, volume, reducedMotion, onOpenSettings, random }: {
   pet?: Pet; onPetChange?: (pet: Pet) => void; soundEnabled: boolean; volume: number; reducedMotion: boolean; onOpenSettings: () => void; random?: () => number;
 }) {
-  const { mood, action, blink, lean, pet: petOnce, rest, wake } = useCompanionMood(random);
+  const { mood, action, blink, lean, reaction, delight, pet: petOnce, rest, wake } = useCompanionMood(random);
   const purr = usePurr(soundEnabled, volume, pet === 'dog' ? 'pant' : 'purr');
   const headX = RIGS[pet].x + RIGS[pet].headArea.cx;
   const roomRef = useRef<SVGSVGElement>(null);
   const strokeRef = useRef<{ pointerId: number; last: number } | null>(null);
+  const rand = random ?? Math.random;
+
+  // 摸到的位置冒出淡淡的愛心與漣漪，一會兒就消失；同時最多幾顆，不會越積越多。
+  const [sparks, setSparks] = useState<Spark[]>([]);
+  const sparkId = useRef(0);
+  const sparkTimers = useRef(new Set<number>());
+  useEffect(() => () => { sparkTimers.current.forEach(t => window.clearTimeout(t)); }, []);
+  const addSpark = (x: number, y: number, big: boolean) => {
+    const id = ++sparkId.current;
+    setSparks(list => [...list.slice(-(MAX_SPARKS - 1)), { id, x, y, drift: (rand() - 0.5) * 30, big }]);
+    const timer = window.setTimeout(() => {
+      sparkTimers.current.delete(timer);
+      setSparks(list => list.filter(s => s.id !== id));
+    }, SPARK_MS);
+    sparkTimers.current.add(timer);
+  };
 
   useEffect(() => { if (mood !== 'happy') purr.stop(); }, [mood, purr]);
 
@@ -28,9 +51,10 @@ export function CompanionScreen({ pet = 'cat', onPetChange, soundEnabled, volume
     const rect = roomRef.current!.getBoundingClientRect();
     return { x: ((event.clientX - rect.left) * ROOM_W) / (rect.width || ROOM_W), y: ((event.clientY - rect.top) * ROOM_H) / (rect.height || ROOM_H) };
   };
-  const touch = (region: Exclude<Region, null>, x = headX) => {
+  const touch = (region: Exclude<Region, null>, x = headX, y = RIGS[pet].y + RIGS[pet].headArea.cy - 40) => {
     const towards = region === 'head' ? (x - headX) / 25 : LEAN[region];
-    petOnce(towards);
+    if (!petOnce(towards, TOUCH[region])) return; // 睡著時只是被輕輕叫醒
+    addSpark(x, y, delight);
     purr.start();
   };
 
@@ -42,7 +66,9 @@ export function CompanionScreen({ pet = 'cat', onPetChange, soundEnabled, volume
     if (!region) return;
     strokeRef.current = { pointerId: event.pointerId, last: Date.now() };
     roomRef.current?.setPointerCapture?.(event.pointerId);
-    touch(region, p.x);
+    // 支援的手機上輕輕震一下（減少動態時不震）
+    if (!reducedMotion) navigator.vibrate?.(8);
+    touch(region, p.x, p.y);
   }
   function onPointerMove(event: ReactPointerEvent<SVGSVGElement>) {
     const stroke = strokeRef.current;
@@ -51,7 +77,7 @@ export function CompanionScreen({ pet = 'cat', onPetChange, soundEnabled, volume
     const region = regionAt(p.x, p.y, pet);
     if (!region) return;
     stroke.last = Date.now();
-    touch(region, p.x);
+    touch(region, p.x, p.y);
   }
   // 手指離開或手勢被取消時，聲音立刻淡出（萌寵仍會瞇眼一下再回到平常）。
   function onPointerUp(event: ReactPointerEvent<SVGSVGElement>) {
@@ -66,7 +92,7 @@ export function CompanionScreen({ pet = 'cat', onPetChange, soundEnabled, volume
       <TopBar label={copy.title} onOpenSettings={onOpenSettings} />
       <h1 tabIndex={-1} data-screen-heading className="sr-only">{copy.title}</h1>
       <svg ref={roomRef} className={`companion-room${reducedMotion ? ' companion-room--still' : ''}`} viewBox={`0 0 ${ROOM_W} ${ROOM_H}`}
-        role="img" aria-label={copy.state[pet][mood]}
+        role="img" aria-label={delight ? copy.delight[pet] : copy.state[pet][mood]}
         onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}>
         <defs>
           <linearGradient id="room-wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#f3e9de" /><stop offset="1" stopColor="#e9d9c8" /></linearGradient>
@@ -94,7 +120,18 @@ export function CompanionScreen({ pet = 'cat', onPetChange, soundEnabled, volume
         <ellipse cx="290" cy="716" rx="150" ry="22" fill="#d6e0ee" opacity="0.6" />
         <rect width={ROOM_W} height="560" fill="url(#room-light)" pointerEvents="none" />
 
-        <PetRig pet={pet} mood={mood} action={action} blink={blink} lean={lean} />
+        <PetRig pet={pet} mood={mood} action={action} blink={blink} lean={lean} reaction={reaction} delight={delight} />
+
+        <g className="companion-sparks" pointerEvents="none" aria-hidden="true">
+          {sparks.map(s => (
+            <g key={s.id} transform={`translate(${s.x} ${s.y})`}>
+              <circle className="spark-ripple" r="14" />
+              <g className="spark-heart" style={{ ['--drift' as string]: `${s.drift}px` }}>
+                <path d={HEART} transform={s.big ? 'scale(2.1)' : 'scale(1.6)'} />
+              </g>
+            </g>
+          ))}
+        </g>
 
         {sleeping && (
           <g className="companion-zzz" aria-hidden="true">

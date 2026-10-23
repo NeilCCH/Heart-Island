@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react';
 import type { Pet } from '../energy/core/types';
 import { PET_IMAGE } from '../energy/ui/components/PetFigure';
-import type { Action, Mood } from './useCompanionMood';
+import type { Action, Mood, Reaction } from './useCompanionMood';
 
 // 2.5D 萌寵：同一張已核准的去背圖，以 clipPath 切成頭、身體、尾巴三層，
 // 分別繞關節點轉動；眼皮用同一張圖往下移的毛色蓋住眼睛，只用來眨眼、瞇眼與睡覺。不重繪、不換角色。
@@ -81,13 +81,17 @@ function Lids({ pet, mood, blink }: { pet: Pet; mood: Mood; blink: boolean }) {
   );
 }
 
-export function PetRig({ pet, mood, action, blink, lean }: { pet: Pet; mood: Mood; action: Action; blink: boolean; lean: number }) {
+export function PetRig({ pet, mood, action, blink, lean, reaction = null, delight = false }: {
+  pet: Pet; mood: Mood; action: Action; blink: boolean; lean: number; reaction?: { kind: Reaction; n: number } | null; delight?: boolean;
+}) {
+  // 回饋動畫用 a／b 兩個相同的 class 交替，連續摸也會每次重新播放。
+  const react = reaction ? ` rig--react-${reaction.kind}-${reaction.n % 2 ? 'a' : 'b'}` : '';
   const rig = RIGS[pet]; const { src, width, height } = PET_IMAGE[pet];
   const id = (part: string) => `rig-${pet}-${part}`;
   const origins = { '--rig-breath-o': rig.origins.breath, '--rig-head-o': rig.origins.head, '--rig-tail-o': rig.origins.tail } as CSSProperties;
   return (
     <svg x={rig.x} y={rig.y} width={width} height={height} viewBox={`0 0 ${width} ${height}`} overflow="visible"
-      className={`rig rig--${pet} rig--${mood} rig--act-${action}`} style={origins}>
+      className={`rig rig--${pet} rig--${mood} rig--act-${action}${react}${delight ? ' rig--delight' : ''}`} style={origins}>
       <defs>
         <clipPath id={id('head')}><polygon points={rig.head} /></clipPath>
         <clipPath id={id('body')}><polygon points={rig.body} /></clipPath>
@@ -100,13 +104,17 @@ export function PetRig({ pet, mood, action, blink, lean }: { pet: Pet; mood: Moo
         ))}
       </defs>
       <g className="rig-breath">
-        <g className="rig-stretch">
-          <g className="rig-tail"><image href={src} width={width} height={height} clipPath={`url(#${id('tail')})`} /></g>
-          <image href={src} width={width} height={height} clipPath={`url(#${id('body')})`} />
-          <g className="rig-head-lean" style={{ transform: `rotate(${lean}deg)` }}>
-            <g className="rig-head">
-              <image href={src} width={width} height={height} clipPath={`url(#${id('head')})`} />
-              <Lids pet={pet} mood={mood} blink={blink} />
+        <g className="rig-react">
+          <g className="rig-stretch">
+            <g className="rig-tail"><image href={src} width={width} height={height} clipPath={`url(#${id('tail')})`} /></g>
+            <image href={src} width={width} height={height} clipPath={`url(#${id('body')})`} />
+            <g className="rig-head-lean" style={{ transform: `rotate(${lean}deg)` }}>
+              <g className="rig-head">
+                <g className="rig-nuzzle">
+                  <image href={src} width={width} height={height} clipPath={`url(#${id('head')})`} />
+                  <Lids pet={pet} mood={mood} blink={blink} />
+                </g>
+              </g>
             </g>
           </g>
         </g>

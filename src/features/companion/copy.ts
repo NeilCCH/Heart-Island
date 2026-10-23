@@ -24,5 +24,10 @@ export const companionCopy = {
       sleep: '小狗睡著了，呼吸慢慢的。',
     },
   } satisfies Record<Pet, Record<Mood, string>>,
+  // 連續摸了好幾下之後
+  delight: {
+    cat: '小貓很放鬆，呼嚕聲變得綿長。',
+    dog: '小狗開心得扭來扭去。',
+  } satisfies Record<Pet, string>,
   note: '牠不需要吃東西，不會生病，也不會因為你沒來而難過。下次來，牠還在這裡。',
 } as const;
