@@ -1,0 +1,45 @@
+/* 小貓陪伴屋：直式房間場景（兩種主題相同）。動作都很慢、幅度很小。 */
+.companion { gap: 10px; }
+.companion-room {
+  display: block; margin: 0 auto; touch-action: none; user-select: none; -webkit-user-select: none;
+  width: max(min(100%, 280px), min(100%, calc((100dvh - 250px) * 600 / 800)));
+  max-width: 100%; aspect-ratio: 600 / 800; border-radius: 22px;
+  box-shadow: 0 10px 28px rgb(27 42 68 / 0.18), 0 2px 6px rgb(27 42 68 / 0.12);
+}
+.companion-hint { text-align: center; }
+.companion-night { transition: opacity 2.5s ease; }
+
+.rig g { transform-box: view-box; }
+.rig-breath { transform-origin: 190px 430px; animation: rig-breathe 3.6s ease-in-out infinite; }
+.rig--sleep .rig-breath { animation-duration: 5.6s; }
+.rig-stretch { transform-origin: 190px 436px; transition: transform 1.2s ease; }
+.rig--sleep .rig-stretch { transform: translateY(8px) scaleY(0.97); }
+.rig--act-stretch .rig-stretch { animation: rig-stretch 1.8s ease-in-out; }
+.rig-head-lean { transform-origin: 195px 268px; transition: transform 0.45s ease; }
+.rig-head { transform-origin: 195px 268px; transition: transform 1.2s ease; }
+.rig--sleep .rig-head { transform: rotate(6deg) translateY(10px); }
+.rig--act-tilt .rig-head { animation: rig-tilt 1.8s ease-in-out; }
+.rig-tail { transform-origin: 85px 385px; animation: rig-tail 6s ease-in-out infinite alternate; }
+.rig--act-swish .rig-tail { animation: rig-swish 1.8s ease-in-out; }
+.rig--sleep .rig-tail { animation: none; transform: rotate(-4deg); }
+.rig--happy .rig-breath { animation: rig-purr 0.12s linear infinite; }
+
+@keyframes rig-breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.006, 1.016); } }
+@keyframes rig-purr { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(0.4px, 0.3px); } }
+@keyframes rig-stretch { 0%, 100% { transform: scale(1, 1); } 35% { transform: scale(1.05, 0.93); } 70% { transform: scale(0.97, 1.05); } }
+@keyframes rig-tilt { 0%, 100% { transform: rotate(0); } 40%, 70% { transform: rotate(-8deg); } }
+@keyframes rig-tail { from { transform: rotate(-2deg); } to { transform: rotate(2.5deg); } }
+@keyframes rig-swish { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-11deg); } 65% { transform: rotate(7deg); } }
+
+.companion-zzz text { font: 700 34px system-ui, sans-serif; fill: #f3f1ff; opacity: 0.85; animation: zzz 3.6s ease-in-out infinite; }
+.companion-zzz .z2 { font-size: 40px; animation-delay: 0.6s; }
+.companion-zzz .z3 { font-size: 48px; animation-delay: 1.2s; }
+@keyframes zzz { 0% { opacity: 0; transform: translateY(10px); } 30%, 70% { opacity: 0.85; } 100% { opacity: 0; transform: translateY(-16px); } }
+
+/* 減少動態：保留眨眼、瞇眼與睡姿的靜態變化，不做呼吸、甩尾、伸懶腰與漂浮 */
+.companion-room--still .rig-breath, .companion-room--still .rig-tail, .companion-room--still .rig-head,
+.companion-room--still .rig-stretch, .companion-room--still .companion-zzz text { animation: none !important; }
+.companion-room--still .companion-night, .companion-room--still .rig-head-lean { transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  .rig-breath, .rig-tail, .rig-head, .rig-stretch, .companion-zzz text { animation: none !important; }
+}

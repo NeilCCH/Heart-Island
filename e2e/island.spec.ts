@@ -78,3 +78,23 @@ test('療癒小花園：手機直式畫面，沙盤佔滿主要空間', async ({
   expect(overflow).toBeLessThanOrEqual(0);
   if (shotDir) await page.screenshot({ path: `${shotDir}/garden-mobile.png` });
 });
+
+test('小貓陪伴屋：在頭上滑動摸摸、陪牠休息、手機不水平捲動', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/#companion');
+  const room = page.getByRole('img', { name: /小貓/ });
+  await expect(room).toHaveAttribute('aria-label', '小貓坐著，安靜地陪著你。');
+  const box = (await room.boundingBox())!;
+  const at = (x: number, y: number) => [box.x + (x / 600) * box.width, box.y + (y / 800) * box.height] as const;
+  await page.mouse.move(...at(290, 360));
+  await page.mouse.down();
+  await page.mouse.move(...at(340, 370), { steps: 8 });
+  await page.mouse.up();
+  await expect(room).toHaveAttribute('aria-label', '小貓瞇起眼睛，發出呼嚕聲。');
+  if (shotDir) await page.screenshot({ path: `${shotDir}/companion-happy.png` });
+  await page.getByRole('button', { name: '陪牠休息' }).click();
+  await expect(room).toHaveAttribute('aria-label', '小貓睡著了，呼吸慢慢的。');
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+  if (shotDir) await page.screenshot({ path: `${shotDir}/companion-sleep.png` });
+});
