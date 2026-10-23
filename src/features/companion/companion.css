@@ -1,4 +1,4 @@
-/* 小貓陪伴屋：直式房間場景（兩種主題相同）。動作都很慢、幅度很小。 */
+/* 萌寵陪伴屋：直式房間場景（兩種主題相同）。動作都很慢、幅度很小。 */
 .companion { gap: 10px; }
 .companion-room {
   display: block; margin: 0 auto; touch-action: none; user-select: none; -webkit-user-select: none;

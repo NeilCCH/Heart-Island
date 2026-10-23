@@ -23,7 +23,7 @@ function renderRoom(soundEnabled = false) {
   vi.spyOn(room(), 'getBoundingClientRect').mockReturnValue({ left: 0, top: 0, width: 600, height: 800, right: 600, bottom: 800, x: 0, y: 0, toJSON() {} });
 }
 
-describe('小貓陪伴屋', () => {
+describe('萌寵陪伴屋', () => {
   it('觸摸區域：頭、左右臉頰、身體', () => {
     expect(regionAt(CAT_X + 190, CAT_Y + 60)).toBe('head');
     expect(regionAt(CAT_X + 80, CAT_Y + 210)).toBe('cheekLeft');

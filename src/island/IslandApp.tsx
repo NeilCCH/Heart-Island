@@ -57,7 +57,7 @@ export function IslandApp({ runtime: injected }: { runtime?: EnergyRuntimeDepend
     mainRef.current?.querySelector<HTMLElement>('[data-screen-heading]')?.focus();
   }, [route]);
 
-  // 小貓能量站自帶版面與設定；仍包在 mainRef 內，讓上方的焦點 effect 能找到它的標題。
+  // 萌寵能量站自帶版面與設定；仍包在 mainRef 內，讓上方的焦點 effect 能找到它的標題。
   if (route === 'energy') return <div ref={mainRef}><EnergyStation preferences={preferences} onBack={back} runtime={injected} /></div>;
 
   return (

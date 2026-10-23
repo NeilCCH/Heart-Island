@@ -11,8 +11,8 @@ test('首頁點連結進入各地方，上一頁回到小島', async ({ page }) 
   await expect(page.getByRole('heading', { level: 1, name: '今天一點點' })).toBeFocused();
   await page.goBack();
   await expect(page.getByRole('heading', { level: 1, name: '心靈小島' })).toBeVisible();
-  await page.getByRole('link', { name: /小貓能量站/ }).click();
-  await expect(page.getByRole('heading', { level: 1, name: '小貓能量站' })).toBeVisible();
+  await page.getByRole('link', { name: /萌寵能量站/ }).click();
+  await expect(page.getByRole('heading', { level: 1, name: '萌寵能量站' })).toBeVisible();
   await page.getByRole('button', { name: '← 回小島' }).click();
   await expect(page.getByRole('heading', { level: 1, name: '心靈小島' })).toBeVisible();
 });
@@ -79,7 +79,7 @@ test('療癒小花園：手機直式畫面，沙盤佔滿主要空間', async ({
   if (shotDir) await page.screenshot({ path: `${shotDir}/garden-mobile.png` });
 });
 
-test('小貓陪伴屋：在頭上滑動摸摸、陪牠休息、手機不水平捲動', async ({ page }) => {
+test('萌寵陪伴屋：在頭上滑動摸摸、陪牠休息、手機不水平捲動', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/#companion');
   const room = page.getByRole('img', { name: /小貓/ });

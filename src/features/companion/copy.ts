@@ -1,6 +1,6 @@
 export const companionCopy = {
-  title: '小貓陪伴屋',
-  intro: '小貓在這裡。可以摸摸牠，也可以只是陪牠待著。',
+  title: '萌寵陪伴屋',
+  intro: '萌寵在這裡。可以摸摸牠，也可以只是陪牠待著。',
   petHead: '摸摸頭',
   petCheek: '摸摸臉頰',
   rest: '陪牠休息',

@@ -29,7 +29,7 @@ function setup() {
 const heading = () => screen.getByRole('heading', { level: 1 });
 const announcer = () => screen.getByTestId('announcer').textContent?.replace(/​/g, '');
 
-describe('小貓能量站 UI', () => {
+describe('萌寵能量站 UI', () => {
   it('首頁有安全說明、示範標示、次數語意及原始小貓素材', () => {
     setup();
     expect(heading().textContent).toBe(copy.title);

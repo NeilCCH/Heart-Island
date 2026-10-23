@@ -8,7 +8,7 @@ export const islandCopy = {
     breath: { name: '呼吸小宇宙', desc: '看著光球慢慢呼吸，也可以只是看著。' },
     tiny: { name: '今天一點點', desc: '一件很小的事，做或不做都可以。' },
     garden: { name: '療癒小花園', desc: '畫沙紋、種花、看水波。' },
-    energy: { name: '小貓能量站', desc: '跟著小貓的節奏動一動，附專注計數。' },
-    companion: { name: '小貓陪伴屋', desc: '摸摸小貓，陪牠休息。' },
+    energy: { name: '萌寵能量站', desc: '跟著萌寵的節奏動一動，附專注計數。' },
+    companion: { name: '萌寵陪伴屋', desc: '摸摸萌寵，陪牠休息。' },
   },
 } as const;

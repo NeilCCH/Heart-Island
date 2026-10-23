@@ -10,7 +10,7 @@ const ROOM_W = 600;
 const ROOM_H = 800;
 const LEAN: Record<Exclude<Region, null>, number> = { head: 0, cheekLeft: -6, cheekRight: 6, body: 0 };
 
-// 小貓陪伴屋：沒有餵食、沒有生病、沒有每日登入；不操作時小貓也會安靜地待著。
+// 萌寵陪伴屋：沒有餵食、沒有生病、沒有每日登入；不操作時小貓也會安靜地待著。
 export function CompanionScreen({ soundEnabled, volume, reducedMotion, onOpenSettings, random }: {
   soundEnabled: boolean; volume: number; reducedMotion: boolean; onOpenSettings: () => void; random?: () => number;
 }) {
