@@ -10,7 +10,12 @@ export function GuidedSet({ guide, paused, settings, update, wakeLockAvailable, 
   update: (partial: Partial<EnergySettings>) => void; wakeLockAvailable: boolean;
   onPause: () => void; onResume: () => void; onFinish: () => void; onExit: () => void; onOpenSettings: () => void;
 }) {
-  const seconds = Math.max(1, Math.ceil(guide.phaseRemainingMs / 1000));
+  // 剩餘秒數：奇數秒節奏每段是 x.5 秒，一開始顯示 x.5，之後才以整數倒數，不會比這一段還長。
+  const phaseSeconds = guide.phaseDurationMs / 1000;
+  const remaining = guide.phaseRemainingMs / 1000;
+  const seconds = !Number.isInteger(phaseSeconds) && remaining > Math.floor(phaseSeconds)
+    ? phaseSeconds
+    : Math.max(1, Math.ceil(remaining));
   const pausedText = guide.pauseReason === 'user' ? copy.pausedUser : copy.pausedHidden;
   return (
     <div className="screen screen--guide">
