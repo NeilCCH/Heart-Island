@@ -95,11 +95,11 @@ export function CompanionScreen({ pet = 'cat', onPetChange, soundEnabled, volume
         role="img" aria-label={delight ? copy.delight[pet] : copy.state[pet][mood]}
         onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}>
         <defs>
-          {/* 無縫背景：沒有牆、窗戶與掛畫，只有由上而下的霧白到藍灰，地面附近稍微暖一點 */}
+          {/* 無縫背景：沒有牆、窗戶與掛畫；淺色主題是霧白到藍灰，深色主題是深藍夜色（顏色在 companion.css） */}
           <linearGradient id="room-bg" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#eef2f7" /><stop offset="0.62" stopColor="#e3e9f1" /><stop offset="1" stopColor="#d3dce8" />
+            <stop offset="0" className="room-bg-1" /><stop offset="0.62" className="room-bg-2" /><stop offset="1" className="room-bg-3" />
           </linearGradient>
-          <radialGradient id="room-glow" cx="50%" cy="58%" r="55%"><stop offset="0" stopColor="#fffaf2" stopOpacity="0.85" /><stop offset="1" stopColor="#fffaf2" stopOpacity="0" /></radialGradient>
+          <radialGradient id="room-glow" cx="50%" cy="58%" r="55%"><stop offset="0" className="room-glow" stopOpacity="0.85" /><stop offset="1" className="room-glow" stopOpacity="0" /></radialGradient>
           <radialGradient id="room-cushion" cx="45%" cy="40%"><stop offset="0" stopColor="#c9d6e8" /><stop offset="1" stopColor="#8fa3c0" /></radialGradient>
           <radialGradient id="room-shadow"><stop offset="0" stopColor="#3c4a64" stopOpacity="0.22" /><stop offset="1" stopColor="#3c4a64" stopOpacity="0" /></radialGradient>
         </defs>

@@ -3,19 +3,74 @@
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --glyph: #a9bee0; --glyph-soft: #2c3a57; } }
 :root[data-theme="dark"] { --glyph: #a9bee0; --glyph-soft: #2c3a57; }
 
-.screen--island { display: flex; flex-direction: column; gap: 20px; }
-.island-hero { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; }
-.island-hero .cat--compact { width: min(34vw, 150px); }
-.places { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
-.place {
-  display: flex; gap: 14px; align-items: center; min-height: 76px; padding: 14px 16px;
-  border-radius: 18px; border: 1.5px solid var(--line); background: var(--surface);
-  color: var(--text); text-decoration: none;
+.screen--island { display: flex; flex-direction: column; gap: 18px; }
+
+/* 首頁主視覺：插畫卡片，萌寵坐在小島上 */
+:root {
+  --isl-sky-top: #cfe0f1; --isl-sky-bottom: #f7e9dc; --isl-sea-top: #9fbfd9; --isl-sea-bottom: #6f93b8;
+  --isl-sun: #fff1d6; --isl-wave: #ffffff; --isl-sand: #ecd9bd; --isl-grass: #a9c3a2; --isl-leaf: #8fb08a; --isl-leaf-2: #7aa077;
+  --isl-trunk: #9b7d5f; --isl-cloud: #ffffff; --isl-star: transparent;
 }
-a.place:hover { border-color: var(--progress); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --isl-sky-top: #0d1630; --isl-sky-bottom: #2a3460; --isl-sea-top: #22325a; --isl-sea-bottom: #121c38;
+    --isl-sun: #f3edd9; --isl-wave: #9fb3e0; --isl-sand: #6e6a7f; --isl-grass: #4f6b62; --isl-leaf: #49665c; --isl-leaf-2: #3e5a51;
+    --isl-trunk: #5c5060; --isl-cloud: #8a96bf; --isl-star: #e8edfb;
+  }
+}
+:root[data-theme="dark"] {
+  --isl-sky-top: #0d1630; --isl-sky-bottom: #2a3460; --isl-sea-top: #22325a; --isl-sea-bottom: #121c38;
+  --isl-sun: #f3edd9; --isl-wave: #9fb3e0; --isl-sand: #6e6a7f; --isl-grass: #4f6b62; --isl-leaf: #49665c; --isl-leaf-2: #3e5a51;
+  --isl-trunk: #5c5060; --isl-cloud: #8a96bf; --isl-star: #e8edfb;
+}
+.island-hero {
+  overflow: hidden; border-radius: 26px; background: var(--surface);
+  border: 1px solid var(--card-border); box-shadow: var(--shadow-strong);
+}
+.island-hero__scene { position: relative; aspect-ratio: 400 / 250; }
+.island-scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.island-hero__pet { position: absolute; left: 50%; bottom: 27%; width: 21%; transform: translateX(-60%); }
+.island-hero__pet .cat--compact, .island-hero__pet .cat { width: 100%; }
+.island-hero__pet .cat::before { display: none; }
+.island-hero__text { padding: 14px 20px 18px; display: flex; flex-direction: column; gap: 4px; }
+.island-hero__text > * { margin: 0; }
+.island-hero__text .lead { color: var(--muted); font-size: 1rem; }
+.isl-sky-top { stop-color: var(--isl-sky-top); } .isl-sky-bottom { stop-color: var(--isl-sky-bottom); }
+.isl-sea-top { stop-color: var(--isl-sea-top); } .isl-sea-bottom { stop-color: var(--isl-sea-bottom); }
+.isl-sun { stop-color: var(--isl-sun); } .isl-sun-disc { fill: var(--isl-sun); }
+.isl-stars circle { fill: var(--isl-star); }
+.isl-clouds path { fill: var(--isl-cloud); opacity: 0.75; animation: isl-cloud 40s ease-in-out infinite alternate; }
+.isl-waves path { fill: none; stroke: var(--isl-wave); stroke-width: 1.6; stroke-linecap: round; opacity: 0.55; animation: isl-wave 9s ease-in-out infinite alternate; }
+.isl-waves path:nth-child(2) { animation-duration: 11s; } .isl-waves path:nth-child(3) { animation-duration: 13s; }
+.isl-shadow { fill: rgb(10 20 40 / 0.18); }
+.isl-sand { fill: var(--isl-sand); } .isl-grass { fill: var(--isl-grass); }
+.isl-trunk { fill: none; stroke: var(--isl-trunk); stroke-width: 4; stroke-linecap: round; }
+.isl-leaf { fill: var(--isl-leaf); } .isl-leaf--2 { fill: var(--isl-leaf-2); }
+@keyframes isl-cloud { from { transform: translateX(-8px); } to { transform: translateX(10px); } }
+@keyframes isl-wave { from { transform: translateX(-12px); } to { transform: translateX(0); } }
+:root[data-motion="reduced"] .isl-clouds path, :root[data-motion="reduced"] .isl-waves path { animation: none; }
+@media (prefers-reduced-motion: reduce) { .isl-clouds path, .isl-waves path { animation: none; } }
+
+/* 地點卡片：每個地方一個柔和的主色；第一個（呼吸小宇宙）佔滿一行 */
+.places { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.places > li:first-child { grid-column: 1 / -1; }
+@media (min-width: 720px) { .places { grid-template-columns: repeat(3, minmax(0, 1fr)); } .places > li:first-child { grid-column: span 1; } }
+[data-place="breath"] { --hue: #5b6fae; } [data-place="tiny"] { --hue: #5f9479; } [data-place="garden"] { --hue: #b08b55; }
+[data-place="energy"] { --hue: #c27c62; } [data-place="companion"] { --hue: #8a78b6; }
+.place {
+  height: 100%; display: flex; gap: 12px; align-items: center; min-height: 76px; padding: 14px;
+  border-radius: 20px; border: 1px solid var(--card-border); color: var(--text); text-decoration: none;
+  background: var(--surface); /* 舊版瀏覽器不支援 color-mix 時的底色 */
+  background: linear-gradient(135deg, color-mix(in srgb, var(--hue) 12%, var(--surface)), var(--surface) 70%);
+  box-shadow: var(--shadow); transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.places > li:not(:first-child) .place { flex-direction: column; align-items: flex-start; }
+a.place:hover { box-shadow: var(--shadow-strong); }
+a.place:active { transform: scale(0.98); }
+.place__glyph { padding: 6px; border-radius: 14px; background: var(--surface-2); background: color-mix(in srgb, var(--hue) 18%, var(--surface)); --glyph: var(--hue); --glyph-soft: color-mix(in srgb, var(--hue) 38%, var(--surface)); }
 a.place:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 .place--soon { opacity: 0.6; }
-.place__glyph { flex: none; }
+.place__glyph { flex: none; width: 52px; height: 52px; }
 .place__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .place__name { font-weight: 700; font-size: 1.08rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .place__desc { color: var(--muted); font-size: 0.93rem; }

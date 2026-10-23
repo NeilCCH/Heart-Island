@@ -39,5 +39,5 @@ def make(src, scale, eyes, out, preview, pad=1.32, feather=1.7, detail_sigma=1.6
 # 眼睛數值（cx, cy, rx, ry, 借毛流的位移）需與 src/features/companion/PetRig.tsx 的 eyes 一致。
 # 需要 opencv-python-headless、numpy、Pillow。
 S=sys.argv[1]
-make('public/assets/cat/cutout.png',1,[(138,171,29,24,(0,62)),(236,146,27,25,(18,62))],f'{S}/cat_lids.png',f'{S}/cat_lids_prev.png')
+make('assets-src/cat/cutout.png',1,[(138,171,29,24,(0,62)),(236,146,27,25,(18,62))],f'{S}/cat_lids.png',f'{S}/cat_lids_prev.png')
 make('public/assets/dog/cutout.webp',2,[(170,108,15,13,(0,40)),(253,96,14,13,(0,40))],f'{S}/dog_lids.png',f'{S}/dog_lids_prev.png')

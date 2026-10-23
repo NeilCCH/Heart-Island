@@ -79,3 +79,13 @@
   .rig-breath, .rig-tail, .rig-head, .rig-stretch, .rig-react, .rig-nuzzle, .spark-ripple, .companion-zzz text { animation: none !important; }
   .spark-heart { animation-name: spark-fade !important; }
 }
+
+/* 房間背景跟著主題：淺色霧白、深色深藍；萌寵與坐墊本身不變 */
+.companion-room { --room-1: #eef2f7; --room-2: #e3e9f1; --room-3: #d3dce8; --room-glow: #fffaf2; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .companion-room { --room-1: #1a2440; --room-2: #233056; --room-3: #2c3a63; --room-glow: #ffe9c9; }
+}
+:root[data-theme="dark"] .companion-room { --room-1: #1a2440; --room-2: #233056; --room-3: #2c3a63; --room-glow: #ffe9c9; }
+.room-bg-1 { stop-color: var(--room-1); } .room-bg-2 { stop-color: var(--room-2); } .room-bg-3 { stop-color: var(--room-3); }
+.room-glow { stop-color: var(--room-glow); }
+.companion-room { align-self: center; }

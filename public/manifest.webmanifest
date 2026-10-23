@@ -1,13 +1,13 @@
 {
   "name": "心靈小島",
   "short_name": "心靈小島",
-  "description": "累了就來島上待一下：呼吸小宇宙、今天一點點、萌寵能量站。不需登入，不蒐集資料。",
+  "description": "累了就來島上待一下：呼吸小宇宙、今天一點點、療癒小花園、萌寵能量站、萌寵陪伴屋。不需登入，不蒐集資料。",
   "lang": "zh-Hant",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f3f5f8",
-  "theme_color": "#f3f5f8",
+  "background_color": "#f7f8fb",
+  "theme_color": "#f7f8fb",
   "icons": [
     {
       "src": "icons/icon-192.png",
@@ -26,6 +26,69 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "id": "./",
+  "shortcuts": [
+    {
+      "name": "呼吸小宇宙",
+      "short_name": "呼吸小宇宙",
+      "url": "./#breath",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "今天一點點",
+      "short_name": "今天一點點",
+      "url": "./#tiny",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "療癒小花園",
+      "short_name": "療癒小花園",
+      "url": "./#garden",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "萌寵能量站",
+      "short_name": "萌寵能量站",
+      "url": "./#energy",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "萌寵陪伴屋",
+      "short_name": "萌寵陪伴屋",
+      "url": "./#companion",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }
