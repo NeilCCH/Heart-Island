@@ -54,16 +54,27 @@ test('療癒小花園：手指畫沙紋會改變沙盤，種花與拖動石頭',
   const tray = page.getByRole('img', { name: /沙盤/ });
   const box = (await tray.boundingBox())!;
   const pixel = () => page.evaluate(() => {
-    const c = document.querySelector('canvas')!; const d = c.getContext('2d')!.getImageData(200, 375, 1, 1).data; return [d[0], d[1], d[2]].join(',');
+    const c = document.querySelector('canvas')!; const d = c.getContext('2d')!.getImageData(200, 420, 1, 1).data; return [d[0], d[1], d[2]].join(',');
   });
   const before = await pixel();
-  await page.mouse.move(box.x + box.width * 0.1, box.y + box.height * 0.5);
+  await page.mouse.move(box.x + box.width * 0.1, box.y + box.height * 0.3);
   await page.mouse.down();
-  await page.mouse.move(box.x + box.width * 0.4, box.y + box.height * 0.5, { steps: 12 });
+  await page.mouse.move(box.x + box.width * 0.4, box.y + box.height * 0.3, { steps: 12 });
   await page.mouse.up();
   expect(await pixel()).not.toBe(before);
   await page.getByRole('radio', { name: '種花' }).check();
   await tray.click({ position: { x: box.width * 0.15, y: box.height * 0.8 } });
-  await expect(tray).toHaveAttribute('aria-label', /1 朵花/);
+  await expect(tray).toHaveAttribute('aria-label', /3 叢花/);
   if (shotDir) await page.screenshot({ path: `${shotDir}/garden.png`, fullPage: true });
+});
+
+test('療癒小花園：手機直式畫面，沙盤佔滿主要空間', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/#garden');
+  const box = (await page.getByRole('img', { name: /沙盤/ }).boundingBox())!;
+  expect(box.height).toBeGreaterThan(box.width);
+  expect(box.width).toBeGreaterThan(330);
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+  if (shotDir) await page.screenshot({ path: `${shotDir}/garden-mobile.png` });
 });

@@ -1,20 +1,40 @@
-/* 療癒小花園：暖沙色沙盤是場景本身（兩種主題相同），周圍介面沿用霧白／深藍 */
-.garden-tray {
-  position: relative; width: 100%; max-width: 100%; aspect-ratio: 4 / 3;
-  border-radius: 22px; overflow: hidden; touch-action: none; user-select: none;
-  box-shadow: inset 0 0 0 6px #d6c9b2, 0 6px 18px rgb(27 42 68 / 0.12);
+/* 療癒小花園：直式沙盤配合手機畫面；木框、沙、池塘是場景本身（兩種主題相同） */
+.garden { gap: 10px; }
+.garden-stage {
+  position: relative; margin: 0 auto;
+  width: max(min(100%, 280px), min(100%, calc((100dvh - 220px) * 900 / 1400)));
+  max-width: 100%; aspect-ratio: 900 / 1400;
+  border-radius: 18px; overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none;
+  box-shadow: 0 10px 28px rgb(27 42 68 / 0.18), 0 2px 6px rgb(27 42 68 / 0.12);
   cursor: crosshair;
 }
-.garden-tray--flower, .garden-tray--stone { cursor: pointer; }
+.garden-stage--flower, .garden-stage--stone { cursor: pointer; }
 .garden-sand, .garden-layer { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .garden-layer { pointer-events: none; }
-.garden-flower__bloom { transform-box: fill-box; transform-origin: center; animation: garden-grow 1.2s ease-out both; }
+.garden-hint { text-align: center; }
+
+.garden-flower__bloom { transform-box: fill-box; transform-origin: center; animation: garden-grow 1.4s ease-out both; }
 @keyframes garden-grow { from { transform: scale(0.1); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .garden-ripple {
-  fill: none; stroke: rgb(255 255 255 / 0.85); stroke-width: 3;
-  transform-box: fill-box; transform-origin: center; animation: garden-ripple 1.6s ease-out forwards;
+  fill: none; stroke: rgb(255 255 255 / 0.8); stroke-width: 3;
+  transform-box: fill-box; transform-origin: center; animation: garden-ripple 2s ease-out forwards;
 }
-@keyframes garden-ripple { from { transform: scale(0.08); opacity: 1; } to { transform: scale(1); opacity: 0; } }
+@keyframes garden-ripple { from { transform: scale(0.06); opacity: 1; } to { transform: scale(1); opacity: 0; } }
+.koi { transform-box: view-box; }
+.koi--a { animation: koi-swim 48s linear infinite; }
+.koi--b { animation: koi-swim 64s linear infinite reverse; }
+@keyframes koi-swim { to { transform: rotate(360deg); } }
+.garden-maple { transform-box: view-box; transform-origin: 0 0; animation: maple-sway 9s ease-in-out infinite alternate; }
+@keyframes maple-sway { from { transform: rotate(-0.6deg); } to { transform: rotate(0.6deg); } }
 
-:root[data-motion="reduced"] .garden-flower__bloom { animation: none; }
-@media (prefers-reduced-motion: reduce) { .garden-flower__bloom, .garden-ripple { animation: none; } }
+.garden-tools { display: flex; flex-direction: column; gap: 8px; }
+.garden-more { padding: 10px 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
+.garden-more summary { cursor: pointer; font-weight: 600; min-height: 32px; display: flex; align-items: center; }
+.garden-more[open] summary { margin-bottom: 10px; }
+
+:root[data-motion="reduced"] .garden-flower__bloom,
+:root[data-motion="reduced"] .koi,
+:root[data-motion="reduced"] .garden-maple { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .garden-flower__bloom, .garden-ripple, .koi, .garden-maple { animation: none; }
+}
