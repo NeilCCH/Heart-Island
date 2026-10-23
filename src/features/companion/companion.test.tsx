@@ -9,7 +9,7 @@ import { regionAt, RIGS } from './PetRig';
 
 const { x: CAT_X, y: CAT_Y } = RIGS.cat;
 import { companionCopy as copy } from './copy';
-import { SLEEP_AFTER_MS } from './useCompanionMood';
+import { DELIGHT_AFTER, SLEEP_AFTER_MS } from './useCompanionMood';
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -160,6 +160,44 @@ describe('萌寵陪伴屋', () => {
     expect(screen.getByText(copy.hint.dog)).toBeTruthy();
     act(() => { fireEvent.click(screen.getByRole('button', { name: copy.petHead })); });
     expect(room().getAttribute('aria-label')).toBe(copy.state.dog.happy);
+  });
+
+  it('摸摸回饋：摸到的位置冒出愛心，頭會蹭一下，拍身體會扭一下', () => {
+    renderRoom();
+    const down = (x: number, y: number) => act(() => {
+      fireEvent.pointerDown(room(), { clientX: x, clientY: y, pointerId: 1 }); fireEvent.pointerUp(room(), { pointerId: 1 });
+    });
+    down(CAT_X + 190, CAT_Y + 60);
+    expect(document.querySelectorAll('.spark-heart')).toHaveLength(1);
+    expect(document.querySelector('.companion-sparks g')!.getAttribute('transform')).toBe(`translate(${CAT_X + 190} ${CAT_Y + 60})`);
+    expect(document.querySelector('.rig--react-nuzzle-a')).not.toBeNull();
+    down(CAT_X + 190, CAT_Y + 60);
+    expect(document.querySelector('.rig--react-nuzzle-b')).not.toBeNull(); // 連續摸也會重新播放
+    down(CAT_X + 200, CAT_Y + 380);
+    expect(document.querySelector('.rig--react-wiggle-a')).not.toBeNull();
+    act(() => { vi.advanceTimersByTime(1600); });
+    expect(document.querySelectorAll('.spark-heart')).toHaveLength(0);
+  });
+
+  it('連續摸好幾下會很放鬆；愛心數量有上限', () => {
+    renderRoom();
+    for (let i = 0; i < DELIGHT_AFTER + 6; i++) act(() => { fireEvent.click(screen.getByRole('button', { name: copy.petHead })); });
+    expect(room().getAttribute('aria-label')).toBe(copy.delight.cat);
+    expect(document.querySelector('.rig--delight')).not.toBeNull();
+    expect(document.querySelectorAll('.spark-heart').length).toBeLessThanOrEqual(8);
+    act(() => { vi.advanceTimersByTime(1700); });
+    expect(room().getAttribute('aria-label')).toBe(copy.state.cat.idle);
+    act(() => { fireEvent.click(screen.getByRole('button', { name: copy.petHead })); });
+    expect(room().getAttribute('aria-label')).toBe(copy.state.cat.happy); // 放鬆程度重新累積
+  });
+
+  it('睡著時被摸到，只會輕輕醒來伸懶腰，不會冒愛心', () => {
+    renderRoom();
+    act(() => { fireEvent.click(screen.getByRole('button', { name: copy.rest })); });
+    act(() => { fireEvent.pointerDown(room(), { clientX: CAT_X + 190, clientY: CAT_Y + 60, pointerId: 1 }); fireEvent.pointerUp(room(), { pointerId: 1 }); });
+    expect(room().getAttribute('aria-label')).toBe(copy.state.cat.idle);
+    expect(document.querySelector('.rig--act-stretch')).not.toBeNull();
+    expect(document.querySelectorAll('.spark-heart')).toHaveLength(0);
   });
 
   it('文案沒有需求、懲罰或壓力字詞', () => {

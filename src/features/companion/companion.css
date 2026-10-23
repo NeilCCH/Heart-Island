@@ -37,6 +37,33 @@
 @keyframes rig-pant { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.004, 1.012); } }
 @keyframes rig-swish { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-11deg); } 65% { transform: rotate(7deg); } }
 
+/* 摸摸回饋：頭往手心蹭一下、拍身體扭一下；連續摸會進入很放鬆的樣子 */
+.rig-react { transform-origin: var(--rig-breath-o); }
+.rig-nuzzle { transform-origin: var(--rig-head-o); }
+.rig--react-nuzzle-a .rig-nuzzle { animation: rig-nuzzle-a 0.5s ease-out; }
+.rig--react-nuzzle-b .rig-nuzzle { animation: rig-nuzzle-b 0.5s ease-out; }
+.rig--react-wiggle-a .rig-react { animation: rig-wiggle-a 0.55s ease-in-out; }
+.rig--react-wiggle-b .rig-react { animation: rig-wiggle-b 0.55s ease-in-out; }
+.rig--dog.rig--react-wiggle-a .rig-react { animation: rig-hop-a 0.5s ease-out; }
+.rig--dog.rig--react-wiggle-b .rig-react { animation: rig-hop-b 0.5s ease-out; }
+.rig--cat.rig--react-wiggle-a .rig-tail, .rig--cat.rig--react-wiggle-b .rig-tail { animation: rig-swish 0.9s ease-in-out; }
+.rig--cat.rig--delight .rig-head { animation: rig-content 2.6s ease-in-out infinite; }
+.rig--dog.rig--delight .rig-react { animation: rig-wiggle-a 0.7s ease-in-out infinite; }
+@keyframes rig-nuzzle-a { 0%, 100% { transform: none; } 35% { transform: translateY(-5px) scale(1.025); } 70% { transform: translateY(1px) scale(0.995); } }
+@keyframes rig-nuzzle-b { 0%, 100% { transform: none; } 35% { transform: translateY(-5px) scale(1.025); } 70% { transform: translateY(1px) scale(0.995); } }
+@keyframes rig-wiggle-a { 0%, 100% { transform: none; } 25% { transform: rotate(-2deg); } 75% { transform: rotate(2deg); } }
+@keyframes rig-wiggle-b { 0%, 100% { transform: none; } 25% { transform: rotate(-2deg); } 75% { transform: rotate(2deg); } }
+@keyframes rig-hop-a { 0%, 100% { transform: none; } 30% { transform: translateY(-10px) scale(0.99, 1.02); } 60% { transform: translateY(0) scale(1.02, 0.98); } }
+@keyframes rig-hop-b { 0%, 100% { transform: none; } 30% { transform: translateY(-10px) scale(0.99, 1.02); } 60% { transform: translateY(0) scale(1.02, 0.98); } }
+@keyframes rig-content { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2.5deg); } }
+
+.spark-ripple { fill: none; stroke: #fff; stroke-width: 3; opacity: 0; animation: spark-ripple 0.7s ease-out; }
+.spark-heart path { fill: #f2a7ba; stroke: #fff; stroke-width: 1.2; }
+.spark-heart { opacity: 0; animation: spark-rise 1.5s ease-out; }
+@keyframes spark-ripple { from { opacity: 0.75; transform: scale(0.4); } to { opacity: 0; transform: scale(2.4); } }
+@keyframes spark-rise { 0% { opacity: 0; transform: translate(0, 0) scale(0.6); } 15% { opacity: 0.95; transform: translate(0, -8px) scale(1); } 100% { opacity: 0; transform: translate(var(--drift), -80px) scale(0.9); } }
+@keyframes spark-fade { 0% { opacity: 0; } 15% { opacity: 0.9; } 100% { opacity: 0; } }
+
 .companion-zzz text { font: 700 34px system-ui, sans-serif; fill: #f3f1ff; opacity: 0.85; animation: zzz 3.6s ease-in-out infinite; }
 .companion-zzz .z2 { font-size: 40px; animation-delay: 0.6s; }
 .companion-zzz .z3 { font-size: 48px; animation-delay: 1.2s; }
@@ -44,8 +71,11 @@
 
 /* 減少動態：保留眨眼、瞇眼與睡姿的靜態變化，不做呼吸、甩尾、伸懶腰與漂浮 */
 .companion-room--still .rig-breath, .companion-room--still .rig-tail, .companion-room--still .rig-head,
-.companion-room--still .rig-stretch, .companion-room--still .companion-zzz text { animation: none !important; }
+.companion-room--still .rig-stretch, .companion-room--still .companion-zzz text,
+.companion-room--still .rig-react, .companion-room--still .rig-nuzzle, .companion-room--still .spark-ripple { animation: none !important; }
+.companion-room--still .spark-heart { animation-name: spark-fade !important; }
 .companion-room--still .companion-night, .companion-room--still .rig-head-lean { transition: none; }
 @media (prefers-reduced-motion: reduce) {
-  .rig-breath, .rig-tail, .rig-head, .rig-stretch, .companion-zzz text { animation: none !important; }
+  .rig-breath, .rig-tail, .rig-head, .rig-stretch, .rig-react, .rig-nuzzle, .spark-ripple, .companion-zzz text { animation: none !important; }
+  .spark-heart { animation-name: spark-fade !important; }
 }
