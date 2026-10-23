@@ -50,8 +50,11 @@ export function CompanionScreen({ soundEnabled, volume, reducedMotion, onOpenSet
     stroke.last = Date.now();
     touch(region, p.x);
   }
+  // 手指離開或手勢被取消時，呼嚕聲立刻淡出（小貓仍會瞇眼一下再回到平常）。
   function onPointerUp(event: ReactPointerEvent<SVGSVGElement>) {
-    if (strokeRef.current?.pointerId === event.pointerId) strokeRef.current = null;
+    if (strokeRef.current?.pointerId !== event.pointerId) return;
+    strokeRef.current = null;
+    purr.stop();
   }
 
   const sleeping = mood === 'sleep';

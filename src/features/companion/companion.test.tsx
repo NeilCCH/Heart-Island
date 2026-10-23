@@ -82,6 +82,51 @@ describe('萌寵陪伴屋', () => {
     act(() => { document.dispatchEvent(new Event('visibilitychange')); });
   });
 
+  it('會眨眼：閉眼約 160ms 後再睜開', () => {
+    renderRoom();
+    act(() => { vi.advanceTimersByTime(4250); });
+    expect(document.querySelector('.rig-lids')).not.toBeNull();
+    act(() => { vi.advanceTimersByTime(200); });
+    expect(document.querySelector('.rig-lids')).toBeNull();
+  });
+
+  it('摸摸後切到背景，瞇眼狀態暫停，回來後才繼續', () => {
+    renderRoom();
+    act(() => { fireEvent.click(screen.getByRole('button', { name: copy.petHead })); });
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => true });
+    act(() => { document.dispatchEvent(new Event('visibilitychange')); });
+    act(() => { vi.advanceTimersByTime(5000); });
+    expect(room().getAttribute('aria-label')).toBe(copy.state.happy);
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => false });
+    act(() => { document.dispatchEvent(new Event('visibilitychange')); });
+    act(() => { vi.advanceTimersByTime(1700); });
+    expect(room().getAttribute('aria-label')).toBe(copy.state.idle);
+  });
+
+  it('呼嚕聲：手指離開就停止；播放中調整音量立即生效', () => {
+    const sources: { stop: ReturnType<typeof vi.fn> }[] = [];
+    const gains: { setTargetAtTime: ReturnType<typeof vi.fn> }[] = [];
+    class FakeContext {
+      state = 'running'; currentTime = 0; sampleRate = 8000; destination = {};
+      resume() { return Promise.resolve(); } close() { return Promise.resolve(); }
+      createBuffer() { return { getChannelData: () => new Float32Array(16000) }; }
+      createBufferSource() { const s = { connect: vi.fn(), start: vi.fn(), stop: vi.fn(), loop: false, buffer: null }; sources.push(s); return s; }
+      createOscillator() { const s = { connect: vi.fn(), start: vi.fn(), stop: vi.fn(), frequency: { value: 0 } }; sources.push(s); return s; }
+      createBiquadFilter() { return { connect: vi.fn(), type: '', frequency: { value: 0 } }; }
+      createGain() { const g = { setTargetAtTime: vi.fn() }; gains.push(g); return { connect: vi.fn(), gain: Object.assign(g, { value: 0 }) }; }
+    }
+    vi.stubGlobal('AudioContext', FakeContext);
+    const { rerender } = render(<CompanionScreen soundEnabled volume={0.5} reducedMotion={false} onOpenSettings={() => {}} random={() => 0.5} />);
+    vi.spyOn(room(), 'getBoundingClientRect').mockReturnValue({ left: 0, top: 0, width: 600, height: 800, right: 600, bottom: 800, x: 0, y: 0, toJSON() {} });
+    act(() => { fireEvent.pointerDown(room(), { clientX: CAT_X + 190, clientY: CAT_Y + 60, pointerId: 1 }); });
+    expect(sources.length).toBeGreaterThan(0);
+    const output = gains[gains.length - 1];
+    rerender(<CompanionScreen soundEnabled volume={0.2} reducedMotion={false} onOpenSettings={() => {}} random={() => 0.5} />);
+    expect(output.setTargetAtTime).toHaveBeenLastCalledWith(0.1, 0, 0.1);
+    act(() => { fireEvent.pointerUp(room(), { pointerId: 1 }); });
+    expect(sources.every(s => s.stop.mock.calls.length > 0)).toBe(true);
+  });
+
   it('文案沒有需求、懲罰或壓力字詞', () => {
     const all = JSON.stringify(copy);
     for (const word of [...BANNED_WORDS, '飢餓', '餓了', '想你', '好久不見', '每日', '任務']) expect(all).not.toContain(word);

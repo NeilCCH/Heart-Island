@@ -28,15 +28,13 @@ export function useCompanionMood(random: () => number = Math.random) {
 
   const between = useCallback((min: number, max: number) => min + random() * (max - min), [random]);
 
-  // 眨眼（睡著時不眨）
+  // 眨眼（睡著時不眨）：閉眼與睜眼分成兩個階段，閉眼不會取消自己的睜眼計時。
   useEffect(() => {
-    if (hidden || mood === 'sleep') return;
-    let off = 0;
-    const timer = window.setTimeout(() => {
-      setBlink(true);
-      off = window.setTimeout(() => setBlink(false), BLINK_MS);
-    }, between(2500, 6000));
-    return () => { window.clearTimeout(timer); window.clearTimeout(off); setBlink(false); };
+    if (hidden || mood === 'sleep') { setBlink(false); return; }
+    const timer = blink
+      ? window.setTimeout(() => setBlink(false), BLINK_MS)
+      : window.setTimeout(() => setBlink(true), between(2500, 6000));
+    return () => window.clearTimeout(timer);
   }, [hidden, mood, blink, between]);
 
   // 閒置時偶爾做個小動作
@@ -48,10 +46,10 @@ export function useCompanionMood(random: () => number = Math.random) {
     return () => window.clearTimeout(timer);
   }, [hidden, mood, action, between, random]);
   useEffect(() => {
-    if (action === 'none') return;
+    if (action === 'none' || hidden) return;
     const timer = window.setTimeout(() => setAction('none'), ACTION_MS);
     return () => window.clearTimeout(timer);
-  }, [action]);
+  }, [action, hidden]);
 
   // 一段時間沒有互動就睡著
   useEffect(() => {
@@ -61,11 +59,12 @@ export function useCompanionMood(random: () => number = Math.random) {
   }, [hidden, mood, touchCount]);
 
   // 摸完一陣子回到平常
+  // 背景時這些計時也暫停；回到前景後重新計時。
   useEffect(() => {
-    if (mood !== 'happy') return;
+    if (mood !== 'happy' || hidden) return;
     const timer = window.setTimeout(() => { setMood('idle'); setLean(0); }, HAPPY_MS);
     return () => window.clearTimeout(timer);
-  }, [mood, touchCount]);
+  }, [mood, touchCount, hidden]);
 
   const pet = useCallback((towards = 0) => {
     lastTouch.current = Date.now();

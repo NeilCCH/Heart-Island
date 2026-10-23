@@ -47,6 +47,13 @@ export function usePurr(enabled: boolean, volume: number) {
   }, [enabled, volume]);
 
   useEffect(() => { if (!enabled) stop(); }, [enabled, stop]);
+  // 播放中調整音量立即生效；音量為 0 就停止。
+  useEffect(() => {
+    const nodes = nodesRef.current; const context = contextRef.current;
+    if (!nodes || !context) return;
+    if (volume <= 0) { stop(); return; }
+    try { nodes.gain.gain.setTargetAtTime(0.5 * volume, context.currentTime, 0.1); } catch { /* 已停止 */ }
+  }, [volume, stop]);
   useEffect(() => {
     const onVisibility = () => { if (document.hidden) stop(); };
     document.addEventListener('visibilitychange', onVisibility);
