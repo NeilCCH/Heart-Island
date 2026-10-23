@@ -93,7 +93,9 @@ function Station({ runtime, preferences, onBack, hosted }: StationProps & { pref
     // 比對上次畫面而非旗標：StrictMode 重跑 effect 時不會誤搶焦點。
     if (shownScreen.current === screen) return;
     shownScreen.current = screen;
-    mainRef.current?.querySelector<HTMLElement>('[data-screen-heading]')?.focus();
+    // 回到頂端再移焦點：手機上按「開始引導」時畫面在下方，否則萌寵會被捲到螢幕外。
+    window.scrollTo?.(0, 0);
+    mainRef.current?.querySelector<HTMLElement>('[data-screen-heading]')?.focus({ preventScroll: true });
   }, [screen]);
 
   // 需要使用者手勢的操作：若已開啟聲音，順便授權音訊。
@@ -142,7 +144,7 @@ function Station({ runtime, preferences, onBack, hosted }: StationProps & { pref
       <div ref={mainRef} className="energy__main" inert={settingsOpen}>
         {screen === 'home' && <EnergyHome {...common} onStart={withAudio(actions.start)} />}
         {screen === 'guide' && guide && (
-          <GuidedSet {...common} guide={guide} paused={session.mode === 'pausedGuiding'} wakeLockAvailable={wakeLock.available}
+          <GuidedSet {...common} guide={guide} paused={session.mode === 'pausedGuiding'} reducedMotion={motion.effective} wakeLockAvailable={wakeLock.available}
             onPause={actions.pause} onResume={withAudio(actions.resume)} onFinish={actions.finishSet} onExit={actions.exit} />
         )}
         {screen === 'complete' && (

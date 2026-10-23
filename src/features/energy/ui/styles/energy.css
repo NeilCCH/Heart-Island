@@ -90,7 +90,7 @@ body {
 .notice > p + p { margin-top: 6px; }
 .notice--paused { font-weight: 600; }
 
-/* 小貓：去背靜態圖，站在柔和的地面光暈與接觸陰影上（無動畫、無互動） */
+/* 萌寵：去背圖，站在柔和的地面光暈與接觸陰影上；引導時跟著節奏升高、放下（cat--moving） */
 .cat {
   position: relative; margin: 0; width: min(100%, 300px); max-width: 100%;
   padding-bottom: 5%;
@@ -108,6 +108,8 @@ body {
   position: relative; z-index: 1; display: block; width: 100%; height: auto;
   filter: drop-shadow(0 12px 14px var(--cat-lift));
 }
+.cat--moving img { transform: translateY(calc(var(--lift) * -14%)) scale(calc(1 + var(--lift) * 0.03)); transition: transform 0.12s linear; }
+.cat--moving::after { opacity: calc(1 - var(--lift) * 0.45); transform: translateX(-50%) scale(calc(1 - var(--lift) * 0.2)); transition: opacity 0.12s linear, transform 0.12s linear; }
 .cat--compact { width: min(50%, 240px); }
 @media (max-width: 719px) {
   .screen--home .cat { width: min(62%, 260px); }
@@ -211,3 +213,9 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .progress__fill { transition: none; }
 }
+
+/* 手指友善的滑桿：橫向拖動交給滑桿，上下捲動照常；不會被當成「滑動換頁」。 */
+.touch-range { touch-action: pan-y; }
+.touch-range__row { display: flex; align-items: center; gap: 8px; }
+.touch-range__row .touch-range { flex: 1; min-width: 0; }
+.touch-range__step { min-width: 44px; min-height: 44px; font-variant-numeric: tabular-nums; }

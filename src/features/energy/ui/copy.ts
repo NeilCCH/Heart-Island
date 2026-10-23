@@ -26,6 +26,7 @@ export const copy = {
   paceValue: (p: Pace) => `每次 ${p} 秒`,
   paceSplit: (p: Pace) => `吐氣舉起 ${half(p)} 秒・吸氣放下 ${half(p)} 秒`,
   paceSpoken: (p: Pace) => `每次 ${p} 秒，吐氣 ${half(p)} 秒、吸氣 ${half(p)} 秒`,
+  paceSteps: { less: '−1', more: '+1', lessLabel: '減少 1 秒', moreLabel: '增加 1 秒' },
   paceFast: '稍快',
   paceSlow: '較慢',
   setIndex: (n: number) => `第 ${n} 組`,
