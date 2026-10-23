@@ -38,11 +38,15 @@ export function RestScreen({ rest, paused, pauseReason, settings, update, wakeLo
           {paused && <p className="notice notice--paused">{pauseReason === 'user' ? copy.restPausedUser : copy.restPausedHidden}</p>}
           {/* role=timer 預設不即時播報，避免每秒朗讀倒數 */}
           {/* 圓環倒數：環慢慢走完就是休息結束 */}
-          <div className="rest-ring" role="progressbar" aria-label="休息進度" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(elapsedRatio * 100)}>
-            <svg viewBox="0 0 200 200" aria-hidden="true" focusable="false">
-              <circle cx="100" cy="100" r="88" className="rest-ring__track" />
-              <circle cx="100" cy="100" r="88" className="rest-ring__fill" pathLength="1" strokeDasharray="1" strokeDashoffset={elapsedRatio} />
-            </svg>
+          {/* 進度圓環與倒數是兄弟節點：倒數不在 progressbar 裡，螢幕閱讀器仍讀得到剩餘時間 */}
+          <div className="rest-ring">
+            <div className="rest-ring__bar" role="progressbar" aria-label="休息進度" aria-valuemin={0} aria-valuemax={100}
+              aria-valuenow={Math.round(elapsedRatio * 100)} aria-valuetext={`休息剩餘 ${formatClockSpoken(rest.remainingMs)}`}>
+              <svg viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+                <circle cx="100" cy="100" r="88" className="rest-ring__track" />
+                <circle cx="100" cy="100" r="88" className="rest-ring__fill" pathLength="1" strokeDasharray="1" strokeDashoffset={elapsedRatio} />
+              </svg>
+            </div>
             <p className="timer" role="timer" aria-label={`休息剩餘 ${formatClockSpoken(rest.remainingMs)}`}>{formatClock(rest.remainingMs)}</p>
           </div>
           <p className="muted">{copy.restBody}</p>
