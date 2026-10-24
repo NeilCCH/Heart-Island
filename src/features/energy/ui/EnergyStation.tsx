@@ -87,7 +87,7 @@ function Station({ runtime, preferences, onBack, hosted }: StationProps & { pref
   }, [audio]);
 
   // 換畫面時把焦點移到新畫面的標題；第一次載入不搶焦點。
-  const mainRef = useRef<HTMLDivElement>(null);
+  const mainRef = useRef<HTMLElement>(null);
   const shownScreen = useRef(screen);
   useEffect(() => {
     // 比對上次畫面而非旗標：StrictMode 重跑 effect 時不會誤搶焦點。
@@ -141,7 +141,7 @@ function Station({ runtime, preferences, onBack, hosted }: StationProps & { pref
   return (
     <BackContext.Provider value={onBack ?? null}>
     <div className="energy">
-      <div ref={mainRef} className="energy__main" inert={settingsOpen}>
+      <main ref={mainRef} className="energy__main" inert={settingsOpen}>
         {screen === 'home' && <EnergyHome {...common} onStart={withAudio(actions.start)} />}
         {screen === 'guide' && guide && (
           <GuidedSet {...common} guide={guide} paused={session.mode === 'pausedGuiding'} reducedMotion={motion.effective} wakeLockAvailable={wakeLock.available}
@@ -157,7 +157,7 @@ function Station({ runtime, preferences, onBack, hosted }: StationProps & { pref
             onPause={actions.pauseRest} onResume={withAudio(actions.resumeRest)} onExtend={actions.extendRest} onSkip={actions.skipRest}
             onRestAgain={withAudio(actions.startRest)} onNextSet={withAudio(actions.nextSet)} onExit={actions.exit} />
         )}
-      </div>
+      </main>
       <div className="sr-only" aria-live="polite" aria-atomic="true" data-testid="announcer">{announcement.text}{announcement.count % 2 ? '\u200B' : ''}</div>
       {settingsOpen && (
         <SettingsSheet settings={settings} update={update} remember={preferences.remember} setRemember={preferences.setRemember}
