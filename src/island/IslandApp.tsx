@@ -32,7 +32,7 @@ export function IslandApp({ runtime: injected }: { runtime?: EnergyRuntimeDepend
   const back = useCallback(() => go('home'), [go]);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const openerRef = useRef<HTMLElement | null>(null);
-  const mainRef = useRef<HTMLDivElement>(null);
+  const mainRef = useRef<HTMLElement>(null);
 
   const openSettings = useCallback(() => {
     openerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -58,11 +58,11 @@ export function IslandApp({ runtime: injected }: { runtime?: EnergyRuntimeDepend
   }, [route]);
 
   // 萌寵能量站自帶版面與設定；仍包在 mainRef 內，讓上方的焦點 effect 能找到它的標題。
-  if (route === 'energy') return <div ref={mainRef}><EnergyStation preferences={preferences} onBack={back} runtime={injected} /></div>;
+  if (route === 'energy') return <div ref={mainRef as React.RefObject<HTMLDivElement>}><EnergyStation preferences={preferences} onBack={back} runtime={injected} /></div>;
 
   return (
     <div className="energy">
-      <div ref={mainRef} className="energy__main" inert={settingsOpen}>
+      <main ref={mainRef} className="energy__main" inert={settingsOpen}>
         <BackContext.Provider value={route === 'home' ? null : back}>
           {route === 'home' && <IslandHome available={AVAILABLE} pet={settings.pet} onOpenSettings={openSettings} />}
           {route === 'tiny' && <TinyScreen onOpenSettings={openSettings} />}
@@ -75,7 +75,7 @@ export function IslandApp({ runtime: injected }: { runtime?: EnergyRuntimeDepend
               reducedMotion={motion.effective} onOpenSettings={openSettings} />
           )}
         </BackContext.Provider>
-      </div>
+      </main>
       {settingsOpen && (
         <SettingsSheet settings={settings} update={preferences.update} remember={preferences.remember} setRemember={preferences.setRemember}
           clearSaved={preferences.clearSaved} resetToDefaults={preferences.resetToDefaults} storageError={preferences.storageError}
