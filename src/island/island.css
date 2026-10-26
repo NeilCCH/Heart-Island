@@ -1,4 +1,4 @@
-/* 心靈小島首頁；沿用 energy.css 的設計 token 與按鈕樣式 */
+/* 萌寵心靈島首頁；沿用 energy.css 的設計 token 與按鈕樣式 */
 :root { --glyph: #1f3a68; --glyph-soft: #c9d5e6; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --glyph: #a9bee0; --glyph-soft: #2c3a57; } }
 :root[data-theme="dark"] { --glyph: #a9bee0; --glyph-soft: #2c3a57; }
