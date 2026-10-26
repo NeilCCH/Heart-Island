@@ -1,4 +1,4 @@
-# 心靈小島｜萌寵能量站
+# 萌寵心靈島｜萌寵能量站
 
 目前交付：核心狀態機、單調時計時器、React adapter、偏好設定、測試、已裁去標籤的正面小貓素材，以及正式UI（`src/features/energy/ui/`：開始、引導、暫停、組完成、休息、設定）。UI驗證結果見 docs/UI_TEST_REPORT.md。
 

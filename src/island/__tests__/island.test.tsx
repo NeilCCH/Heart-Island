@@ -30,10 +30,10 @@ const goTo = (name: string) => act(() => {
   window.dispatchEvent(new HashChangeEvent('hashchange'));
 });
 
-describe('心靈小島首頁', () => {
+describe('萌寵心靈島首頁', () => {
   it('列出五個地方，全部都可以進入', () => {
     setup();
-    expect(heading().textContent).toBe('心靈小島');
+    expect(heading().textContent).toBe('萌寵心靈島');
     for (const name of ['呼吸小宇宙', '今天一點點', '療癒小花園', '萌寵能量站', '萌寵陪伴屋']) expect(screen.getByRole('link', { name: new RegExp(name) })).toBeTruthy();
     expect(screen.queryByText('準備中')).toBeNull();
   });
@@ -44,7 +44,7 @@ describe('心靈小島首頁', () => {
     expect(heading().textContent).toBe(tinyCopy.title);
     expect(document.activeElement).toBe(heading());
     act(() => { fireEvent.click(screen.getByRole('button', { name: '← 回小島' })); });
-    expect(heading().textContent).toBe('心靈小島');
+    expect(heading().textContent).toBe('萌寵心靈島');
   });
 
   it('進入萌寵能量站時焦點也移到它的標題', () => {
@@ -64,7 +64,7 @@ describe('心靈小島首頁', () => {
     expect(heading().textContent).toBe('萌寵能量站');
     expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
     act(() => { fireEvent.click(screen.getByRole('button', { name: '← 回小島' })); });
-    expect(heading().textContent).toBe('心靈小島');
+    expect(heading().textContent).toBe('萌寵心靈島');
     expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
   });
 });

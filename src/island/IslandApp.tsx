@@ -20,7 +20,7 @@ import './island.css';
 // 目前開放的地方。
 const AVAILABLE: readonly Route[] = ['home', 'breath', 'tiny', 'garden', 'energy', 'companion'];
 
-// 心靈小島根元件：一份共用偏好（聲音、音量、減少動態、主題、記住偏好），各功能共用。
+// 萌寵心靈島根元件：一份共用偏好（聲音、音量、減少動態、主題、記住偏好），各功能共用。
 export function IslandApp({ runtime: injected }: { runtime?: EnergyRuntimeDependencies }) {
   const [runtime] = useState(() => injected ?? browserRuntime());
   const preferences = useEnergySettings();

@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react';
 import { copy } from '../copy';
 
-// 在心靈小島中提供「回小島」動作；單獨使用時為 null，不顯示返回按鈕。
+// 在萌寵心靈島中提供「回小島」動作；單獨使用時為 null，不顯示返回按鈕。
 export const BackContext = createContext<(() => void) | null>(null);
 
 export function TopBar({ label, onOpenSettings }: { label?: string; onOpenSettings: () => void }) {

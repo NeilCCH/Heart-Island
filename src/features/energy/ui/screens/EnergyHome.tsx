@@ -10,7 +10,7 @@ export function EnergyHome({ settings, update, onStart, onOpenSettings }: {
 }) {
   return (
     <div className="screen screen--home">
-      <TopBar label="心靈小島" onOpenSettings={onOpenSettings} />
+      <TopBar label="萌寵心靈島" onOpenSettings={onOpenSettings} />
       <div className="layout">
         <div className="layout__aside pet-stage">
           <PetFigure pet={settings.pet} />

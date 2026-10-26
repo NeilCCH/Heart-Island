@@ -32,7 +32,7 @@ function isInteractive(target: EventTarget | null) {
 export type Preferences = ReturnType<typeof useEnergySettings>;
 interface StationProps { runtime?: EnergyRuntimeDependencies; preferences?: Preferences; onBack?: () => void }
 
-// 在心靈小島中由外層傳入共用偏好與返回動作；單獨使用（測試）時自己建立偏好。
+// 在萌寵心靈島中由外層傳入共用偏好與返回動作；單獨使用（測試）時自己建立偏好。
 export function EnergyStation(props: StationProps) {
   return props.preferences
     ? <Station {...props} preferences={props.preferences} hosted />
