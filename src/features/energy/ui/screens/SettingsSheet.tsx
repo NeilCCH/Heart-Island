@@ -2,6 +2,7 @@ import { useEffect, useRef, type KeyboardEvent } from 'react';
 import type { EnergySettings } from '../../core/types';
 import { copy } from '../copy';
 import { OptionGroup } from '../components/OptionGroup';
+import { PetPicker } from '../components/Pickers';
 import { TouchRange } from '../components/TouchRange';
 
 type Theme = EnergySettings['theme'];
@@ -40,6 +41,8 @@ export function SettingsSheet({ settings, update, remember, setRemember, clearSa
           <button ref={closeRef} type="button" className="btn btn--ghost btn--small" onClick={onClose}>{copy.close}</button>
         </div>
         <div className="stack">
+          {/* 萌寵選擇只放在設定：小島首頁、萌寵能量站與陪伴屋一起切換 */}
+          <PetPicker value={settings.pet} update={update} />
           <div className="field">
             <label className="switch">
               <input type="checkbox" role="switch" checked={settings.soundEnabled}

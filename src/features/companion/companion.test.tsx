@@ -1,5 +1,4 @@
 // @vitest-environment jsdom
-import { useState } from 'react';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { BANNED_WORDS } from '../energy/ui/copy';
@@ -147,14 +146,11 @@ describe('萌寵陪伴屋', () => {
     expect(regionAt(20, 20, 'dog')).toBeNull();
   });
 
-  it('選萌寵：換成小狗後畫面與文案跟著換，摸摸會搖尾巴', () => {
-    function Host() {
-      const [pet, setPet] = useState<Pet>('cat');
-      return <CompanionScreen pet={pet} onPetChange={setPet} soundEnabled={false} volume={0.5} reducedMotion={false} onOpenSettings={() => {}} random={() => 0.5} />;
-    }
-    render(<Host />);
+  it('設定選了小狗：畫面與文案跟著換，摸摸會搖尾巴；陪伴屋本身不再顯示萌寵選擇', () => {
+    const { rerender } = render(<CompanionScreen pet="cat" soundEnabled={false} volume={0.5} reducedMotion={false} onOpenSettings={() => {}} random={() => 0.5} />);
     expect(document.querySelector('.rig--cat')).not.toBeNull();
-    act(() => { fireEvent.click(screen.getByRole('radio', { name: '小狗' })); });
+    expect(screen.queryByRole('radio', { name: '小狗' })).toBeNull();
+    rerender(<CompanionScreen pet="dog" soundEnabled={false} volume={0.5} reducedMotion={false} onOpenSettings={() => {}} random={() => 0.5} />);
     expect(document.querySelector('.rig--dog')).not.toBeNull();
     expect(room().getAttribute('aria-label')).toBe(copy.state.dog.idle);
     expect(screen.getByText(copy.hint.dog)).toBeTruthy();

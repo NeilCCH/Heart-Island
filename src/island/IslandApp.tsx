@@ -68,7 +68,7 @@ export function IslandApp({ runtime: injected }: { runtime?: EnergyRuntimeDepend
           {route === 'tiny' && <TinyScreen onOpenSettings={openSettings} />}
           {route === 'garden' && <GardenScreen onOpenSettings={openSettings} reducedMotion={motion.effective} />}
           {route === 'companion' && (
-            <CompanionScreen pet={settings.pet} onPetChange={pet => preferences.update({ pet })} soundEnabled={settings.soundEnabled} volume={settings.volume} reducedMotion={motion.effective} onOpenSettings={openSettings} />
+            <CompanionScreen pet={settings.pet} soundEnabled={settings.soundEnabled} volume={settings.volume} reducedMotion={motion.effective} onOpenSettings={openSettings} />
           )}
           {route === 'breath' && (
             <BreathScreen runtime={runtime} remember={preferences.remember} volume={settings.volume}

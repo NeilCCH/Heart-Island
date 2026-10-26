@@ -99,10 +99,12 @@ test('萌寵陪伴屋：在頭上滑動摸摸、陪牠休息、手機不水平�
   if (shotDir) await page.screenshot({ path: `${shotDir}/companion-sleep.png` });
 });
 
-test('萌寵陪伴屋：選小狗後摸摸會搖尾巴，選擇也帶到萌寵能量站', async ({ page }) => {
+test('在設定選小狗：陪伴屋摸摸會搖尾巴，選擇也帶到萌寵能量站', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/#companion');
-  await page.getByRole('radio', { name: '小狗' }).check();
+  await page.getByRole('button', { name: '設定' }).click();
+  await page.getByRole('dialog').getByRole('radio', { name: '小狗' }).check();
+  await page.getByRole('button', { name: '關閉' }).click();
   const room = page.getByRole('img', { name: /小狗/ });
   await expect(room).toHaveAttribute('aria-label', '小狗坐著，安靜地陪著你。');
   if (shotDir) await page.screenshot({ path: `${shotDir}/companion-dog.png` });
@@ -119,5 +121,6 @@ test('萌寵陪伴屋：選小狗後摸摸會搖尾巴，選擇也帶到萌寵�
   if (shotDir) await page.screenshot({ path: `${shotDir}/companion-dog-sleep.png` });
   await page.goto('/#energy');
   await expect(page.getByRole('img', { name: /小狗/ })).toBeVisible();
-  await expect(page.getByRole('radio', { name: '小狗' })).toBeChecked();
+  await page.getByRole('button', { name: '設定' }).click();
+  await expect(page.getByRole('dialog').getByRole('radio', { name: '小狗' })).toBeChecked();
 });
