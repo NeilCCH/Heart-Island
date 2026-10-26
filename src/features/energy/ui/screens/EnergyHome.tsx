@@ -1,7 +1,7 @@
 import type { EnergySettings } from '../../core/types';
 import { copy } from '../copy';
 import { PetFigure } from '../components/PetFigure';
-import { PacePicker, PetPicker, RestPicker, TargetPicker } from '../components/Pickers';
+import { PacePicker, RestPicker, TargetPicker } from '../components/Pickers';
 import { TopBar } from '../components/TopBar';
 
 export function EnergyHome({ settings, update, onStart, onOpenSettings }: {
@@ -25,7 +25,6 @@ export function EnergyHome({ settings, update, onStart, onOpenSettings }: {
           </section>
           <section className="card stack" aria-label={copy.setupTitle}>
             <h2 className="card__title">{copy.setupTitle}</h2>
-            <PetPicker value={settings.pet} update={update} />
             <TargetPicker value={settings.target} update={update} />
             <PacePicker value={settings.pace} update={update} />
             <RestPicker value={settings.restSeconds} update={update} />

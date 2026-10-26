@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import type { Pet } from '../energy/core/types';
-import { PetPicker } from '../energy/ui/components/Pickers';
 import { TopBar } from '../energy/ui/components/TopBar';
 import { PetRig, RIGS, regionAt, type Region } from './PetRig';
 import { companionCopy as copy } from './copy';
@@ -20,8 +19,8 @@ interface Spark { id: number; x: number; y: number; drift: number; big: boolean 
 const HEART = 'M0 6 C -9 -1 -9 -9 -4 -10 C -1 -10.5 0 -8 0 -6.5 C 0 -8 1 -10.5 4 -10 C 9 -9 9 -1 0 6 Z';
 
 // 萌寵陪伴屋：沒有餵食、沒有生病、沒有每日登入；不操作時萌寵也會安靜地待著。
-export function CompanionScreen({ pet = 'cat', onPetChange, soundEnabled, volume, reducedMotion, onOpenSettings, random }: {
-  pet?: Pet; onPetChange?: (pet: Pet) => void; soundEnabled: boolean; volume: number; reducedMotion: boolean; onOpenSettings: () => void; random?: () => number;
+export function CompanionScreen({ pet = 'cat', soundEnabled, volume, reducedMotion, onOpenSettings, random }: {
+  pet?: Pet; soundEnabled: boolean; volume: number; reducedMotion: boolean; onOpenSettings: () => void; random?: () => number;
 }) {
   const { mood, action, blink, lean, reaction, delight, pet: petOnce, rest, wake } = useCompanionMood(random);
   const purr = usePurr(soundEnabled, volume, pet === 'dog' ? 'pant' : 'purr');
@@ -130,7 +129,6 @@ export function CompanionScreen({ pet = 'cat', onPetChange, soundEnabled, volume
         <rect className="companion-night" width={ROOM_W} height={ROOM_H} fill="#1d2a4a" opacity={sleeping ? 0.32 : 0} pointerEvents="none" />
       </svg>
       <p className="muted small companion-hint">{copy.hint[pet]}</p>
-      {onPetChange && <PetPicker value={pet} update={partial => { if (partial.pet) onPetChange(partial.pet); }} />}
 
       <div className="controls">
         <button type="button" className="btn" onClick={() => touch('head')}>{copy.petHead}</button>

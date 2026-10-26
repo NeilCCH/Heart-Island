@@ -41,9 +41,12 @@ describe('萌寵能量站 UI', () => {
     expect(document.querySelectorAll('img')).toHaveLength(1);
   });
 
-  it('選萌寵：換成小狗後，引導畫面也用小狗', () => {
-    const { click, choose } = setup();
-    choose(copy.petLabel, copy.petName.dog);
+  it('在設定裡選萌寵：換成小狗後，引導畫面也用小狗；首頁不再有萌寵選擇', () => {
+    const { click } = setup();
+    expect(screen.queryByRole('group', { name: copy.petLabel })).toBeNull();
+    click(copy.settings);
+    act(() => { fireEvent.click(within(screen.getByRole('dialog')).getByRole('radio', { name: new RegExp(copy.petName.dog) })); });
+    click(copy.close);
     expect((screen.getByRole('img', { name: copy.petAlt.dog }) as HTMLImageElement).getAttribute('src')).toBe(DOG_SRC);
     click(copy.start);
     expect(screen.getByRole('img', { name: copy.petAlt.dog })).toBeTruthy();
