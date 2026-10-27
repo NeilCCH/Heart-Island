@@ -1,0 +1,32 @@
+/* 五感著地：一張卡片一個步驟，圓點一個一個亮起 */
+.ground-preview { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+.ground-preview li {
+  display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 4px; border-radius: 16px;
+  background: var(--surface); border: 1px solid var(--card-border); box-shadow: var(--shadow); font-weight: 600; font-size: 0.95rem;
+}
+.ground-preview__n { font-size: 1.6rem; font-weight: 800; color: var(--progress); line-height: 1.1; }
+.ground-card {
+  display: flex; flex-direction: column; gap: 12px; padding: 22px 20px; border-radius: 24px;
+  border: 1px solid var(--card-border); box-shadow: var(--shadow-strong);
+  background: var(--surface);
+  background: linear-gradient(165deg, color-mix(in srgb, var(--hue, var(--progress)) 16%, var(--surface)), var(--surface) 70%);
+}
+.ground-card > * { margin: 0; }
+.ground-card[data-step="0"] { --hue: #5b6fae; } .ground-card[data-step="1"] { --hue: #4f86a8; } .ground-card[data-step="2"] { --hue: #b08b55; }
+.ground-card[data-step="3"] { --hue: #8a78b6; } .ground-card[data-step="4"] { --hue: #c27c62; } .ground-card--done { --hue: #5f9479; }
+.ground-card__prompt { font-size: clamp(1.25rem, 5vw, 1.55rem); line-height: 1.4; margin: 0; }
+.ground-card__prompt:focus { outline: none; }
+.ground-progress { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; }
+.ground-progress li {
+  flex: 1; text-align: center; font-size: 0.8rem; padding: 3px 0; border-radius: 999px;
+  background: var(--surface-2); color: var(--muted);
+}
+.ground-progress li.is-done { background: color-mix(in srgb, var(--hue) 22%, var(--surface)); }
+.ground-progress li.is-now { background: color-mix(in srgb, var(--hue) 42%, var(--surface)); color: var(--text); font-weight: 700; box-shadow: inset 0 0 0 1.5px var(--hue); }
+.ground-dots { display: flex; gap: 12px; justify-content: center; padding: 10px 0; }
+.ground-dot {
+  width: 30px; height: 30px; border-radius: 50%; border: 2px solid color-mix(in srgb, var(--hue) 55%, var(--surface));
+  background: transparent; transition: background 0.4s ease, transform 0.4s ease;
+}
+.ground-dot.is-on { background: var(--hue); transform: scale(1.08); box-shadow: 0 0 0 6px color-mix(in srgb, var(--hue) 18%, transparent); }
+:root[data-motion="reduced"] .ground-dot { transition: none; }

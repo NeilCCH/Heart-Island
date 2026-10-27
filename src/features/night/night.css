@@ -1,0 +1,30 @@
+/* 睡前模式：不管淺色或深色主題都是很暗的夜色；開始之後連文字也再暗一點 */
+.night {
+  --bg-top: #070b16; --bg-bottom: #04070f; --bg-glow: transparent;
+  --surface: #10172a; --surface-2: #172036; --text: #c9d2e4; --muted: #8592ab; --line: #26314b;
+  --accent: #8ea3c9; --accent-text: #070b16; --tint: rgb(142 163 201 / 0.12); --focus: #b5c6e6;
+  --card-border: rgb(255 255 255 / 0.05); --shadow: none; --shadow-strong: none;
+  color-scheme: dark; color: var(--text); position: relative; isolation: isolate; min-height: calc(100dvh - 40px);
+}
+/* 鋪滿整個畫面的夜色（蓋過外層的淺色背景） */
+.night::before { content: ""; position: fixed; inset: 0; z-index: -1; background: linear-gradient(180deg, #0a1022, #03050b); }
+.night .btn--ghost { color: var(--muted); }
+.night--running .topbar, .night--done .topbar { opacity: 0.45; }
+.night-scene { position: relative; }
+.night-scene svg { display: block; width: min(100%, 420px); margin: 0 auto; height: auto; }
+.night--running .night-scene svg { filter: brightness(0.7); }
+.night-stars circle { fill: #dfe6f7; opacity: 0.5; }
+.night-glow { transform-origin: 300px 560px; transform-box: view-box; transform: scale(0.85); opacity: 0.7; transition: transform 4s ease-in-out, opacity 4s ease-in-out; }
+.night-scene[data-phase="inhale"] .night-glow { transform: scale(1.1); opacity: 1; transition-duration: 4s; }
+.night-scene[data-phase="exhale"] .night-glow { transform: scale(0.85); opacity: 0.6; transition-duration: 6s; }
+.night--still .night-scene .night-glow { transition: none; transform: scale(1); opacity: 0.8; }
+.night-word { margin: 8px 0 0; text-align: center; font-size: 1.3rem; letter-spacing: 0.3em; color: #aab6cf; opacity: 0.8; }
+.night .rig--sleep .rig-breath { animation-duration: 10s; }
+.night--still .rig-breath, .night--still .rig-tail { animation: none !important; }
+.night-bottom { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.night-bottom > * { margin: 0; }
+.night-done { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: 60dvh; text-align: center; }
+.night-done > * { margin: 0; }
+.night-done__title { font-size: 1.8rem; font-weight: 700; color: #9aa6c0; letter-spacing: 0.2em; }
+.night-done .controls { opacity: 0.6; }
+@media (prefers-reduced-motion: reduce) { .night-scene .night-glow, .night-scene[data-phase] .night-glow { transition: none; transform: scale(1); opacity: 0.8; } }

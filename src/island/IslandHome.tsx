@@ -5,7 +5,7 @@ import { islandCopy } from './copy';
 import type { Route } from './useHashRoute';
 
 type Place = keyof typeof islandCopy.places;
-const ORDER: readonly Place[] = ['breath', 'tiny', 'garden', 'energy', 'companion'];
+const ORDER: readonly Place[] = ['breath', 'tiny', 'garden', 'energy', 'companion', 'sounds', 'mood', 'jar', 'ground', 'night'];
 
 // 首頁插畫：天空、遠方的雲、慢慢起伏的海與一座小島（淺色是白天，深色是夜晚）。只作裝飾。
 function IslandScene() {
@@ -50,6 +50,11 @@ function Glyph({ place }: { place: Place }) {
     case 'tiny': return <svg {...common}><rect x="9" y="7" width="22" height="26" rx="5" fill="var(--glyph-soft)" /><path d="M14 20l4 4 8-9" stroke="var(--glyph)" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>;
     case 'garden': return <svg {...common}><path d="M6 26c6-4 22-4 28 0" stroke="var(--glyph-soft)" strokeWidth="3" fill="none" strokeLinecap="round" /><path d="M6 32c6-4 22-4 28 0" stroke="var(--glyph-soft)" strokeWidth="3" fill="none" strokeLinecap="round" /><circle cx="26" cy="15" r="6" fill="var(--glyph)" /></svg>;
     case 'energy': return <svg {...common}><rect x="6" y="18" width="28" height="5" rx="2.5" fill="var(--glyph-soft)" /><circle cx="17" cy="20.5" r="6" fill="var(--glyph)" /></svg>;
+    case 'sounds': return <svg {...common}><path d="M8 24q4-5 8 0t8 0 8 0" stroke="var(--glyph-soft)" strokeWidth="3" fill="none" strokeLinecap="round" /><path d="M14 10v12M20 7v18M26 12v8" stroke="var(--glyph)" strokeWidth="3" strokeLinecap="round" /></svg>;
+    case 'mood': return <svg {...common}><circle cx="15" cy="15" r="6" fill="var(--glyph)" /><path d="M12 30a5 5 0 0 1 1.5-9.7A7 7 0 0 1 27 18a5.5 5.5 0 0 1 3 12z" fill="var(--glyph-soft)" /></svg>;
+    case 'jar': return <svg {...common}><rect x="13" y="6" width="14" height="5" rx="2" fill="var(--glyph)" /><path d="M12 12h16q3 3 3 7v10q0 4-4 4H13q-4 0-4-4V19q0-4 3-7z" fill="var(--glyph-soft)" /><rect x="14" y="24" width="7" height="4" rx="1" fill="var(--glyph)" transform="rotate(-15 17 26)" /><rect x="20" y="21" width="7" height="4" rx="1" fill="var(--glyph)" transform="rotate(20 23 23)" /></svg>;
+    case 'ground': return <svg {...common}><circle cx="20" cy="20" r="14" fill="var(--glyph-soft)" />{[[20, 9], [30, 16], [27, 28], [13, 28], [10, 16]].map(([x, y]) => <circle key={x * y} cx={x} cy={y} r="3" fill="var(--glyph)" />)}</svg>;
+    case 'night': return <svg {...common}><path d="M26 8a12 12 0 1 0 7 18A10 10 0 0 1 26 8z" fill="var(--glyph)" /><circle cx="11" cy="10" r="1.6" fill="var(--glyph-soft)" /><circle cx="31" cy="11" r="1.2" fill="var(--glyph-soft)" /></svg>;
     case 'companion': return <svg {...common}><path d="M10 30c0-9 4-15 10-15s10 6 10 15z" fill="var(--glyph-soft)" /><path d="M12 17l2-8 5 6M28 17l-2-8-5 6" fill="var(--glyph)" /></svg>;
   }
 }

@@ -1,0 +1,28 @@
+/* 療癒聲音：五張安靜的聲音卡片，播放中的那張微微亮起 */
+.scapes { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.scapes > li:last-child:nth-child(odd) { grid-column: 1 / -1; }
+@media (min-width: 720px) { .scapes { grid-template-columns: repeat(5, minmax(0, 1fr)); } .scapes > li:last-child:nth-child(odd) { grid-column: auto; } }
+[data-scape="rain"] { --hue: #5b6fae; } [data-scape="waves"] { --hue: #4f86a8; } [data-scape="fire"] { --hue: #c27c62; }
+[data-scape="forest"] { --hue: #5f9479; } [data-scape="stream"] { --hue: #6b8fb0; }
+.scape {
+  width: 100%; height: 100%; min-height: 104px; display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  padding: 14px; border-radius: 20px; border: 1px solid var(--card-border); color: var(--text); font: inherit; text-align: left; cursor: pointer;
+  background: var(--surface);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--hue) 12%, var(--surface)), var(--surface) 70%);
+  box-shadow: var(--shadow); transition: box-shadow 0.2s ease, transform 0.15s ease;
+}
+.scape:active { transform: scale(0.98); }
+.scape:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.scape[aria-pressed="true"] {
+  border-color: var(--hue); box-shadow: inset 0 0 0 1.5px var(--hue), var(--shadow-strong);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--hue) 26%, var(--surface)), var(--surface) 80%);
+}
+.scape__glyph { color: var(--hue); margin-bottom: 4px; }
+.scape[aria-pressed="true"] .scape__glyph { animation: scape-breathe 4s ease-in-out infinite; }
+.scape__name { font-weight: 700; font-size: 1.05rem; }
+.scape[aria-pressed="true"] .scape__name::after { content: " · 播放中"; font-weight: 500; font-size: 0.85rem; color: var(--muted); }
+.scape__desc { color: var(--muted); font-size: 0.9rem; }
+.sounds-status { min-height: 1.6em; color: var(--muted); }
+@keyframes scape-breathe { 50% { transform: scale(1.12); opacity: 0.75; } }
+:root[data-motion="reduced"] .scape__glyph { animation: none !important; }
+@media (prefers-reduced-motion: reduce) { .scape__glyph { animation: none !important; } }

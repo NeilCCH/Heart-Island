@@ -12,13 +12,18 @@ import { BreathScreen, clearBreathPrefs } from '../features/breath/BreathScreen'
 import { TinyScreen } from '../features/tiny/TinyScreen';
 import { GardenScreen } from '../features/garden/GardenScreen';
 import { CompanionScreen } from '../features/companion/CompanionScreen';
+import { SoundsScreen } from '../features/sounds/SoundsScreen';
+import { MoodScreen } from '../features/mood/MoodScreen';
+import { JarScreen } from '../features/jar/JarScreen';
+import { GroundScreen } from '../features/ground/GroundScreen';
+import { NightScreen } from '../features/night/NightScreen';
 import { IslandHome } from './IslandHome';
 import { useHashRoute, type Route } from './useHashRoute';
 import '../features/energy/ui/styles/energy.css';
 import './island.css';
 
 // 目前開放的地方。
-const AVAILABLE: readonly Route[] = ['home', 'breath', 'tiny', 'garden', 'energy', 'companion'];
+const AVAILABLE: readonly Route[] = ['home', 'breath', 'tiny', 'garden', 'energy', 'companion', 'sounds', 'mood', 'jar', 'ground', 'night'];
 
 // 萌寵心靈島根元件：一份共用偏好（聲音、音量、減少動態、主題、記住偏好），各功能共用。
 export function IslandApp({ runtime: injected }: { runtime?: EnergyRuntimeDependencies }) {
@@ -70,6 +75,11 @@ export function IslandApp({ runtime: injected }: { runtime?: EnergyRuntimeDepend
           {route === 'companion' && (
             <CompanionScreen pet={settings.pet} soundEnabled={settings.soundEnabled} volume={settings.volume} reducedMotion={motion.effective} onOpenSettings={openSettings} />
           )}
+          {route === 'sounds' && <SoundsScreen initialVolume={settings.volume} onOpenSettings={openSettings} />}
+          {route === 'mood' && <MoodScreen onOpenSettings={openSettings} />}
+          {route === 'jar' && <JarScreen onOpenSettings={openSettings} />}
+          {route === 'ground' && <GroundScreen onOpenSettings={openSettings} />}
+          {route === 'night' && <NightScreen pet={settings.pet} volume={settings.volume} reducedMotion={motion.effective} onOpenSettings={openSettings} />}
           {route === 'breath' && (
             <BreathScreen runtime={runtime} remember={preferences.remember} volume={settings.volume}
               reducedMotion={motion.effective} onOpenSettings={openSettings} />
