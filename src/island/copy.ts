@@ -10,5 +10,10 @@ export const islandCopy = {
     garden: { name: '療癒小花園', desc: '畫沙紋、種花、看水波。' },
     energy: { name: '萌寵能量站', desc: '跟著萌寵的節奏動一動，附專注計數。' },
     companion: { name: '萌寵陪伴屋', desc: '摸摸萌寵，陪牠休息。' },
+    sounds: { name: '療癒聲音', desc: '雨聲、海浪、營火，可定時關閉。' },
+    mood: { name: '心情小天氣', desc: '今天心裡是什麼天氣？' },
+    jar: { name: '感謝小罐子', desc: '放一張小小好事的紙條。' },
+    ground: { name: '五感著地', desc: '用五種感官回到當下。' },
+    night: { name: '睡前模式', desc: '很暗的畫面，萌寵陪你慢慢呼吸入睡。' },
   },
 } as const;

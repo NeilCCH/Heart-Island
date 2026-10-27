@@ -42,10 +42,11 @@ test('呼吸小宇宙：光球吸吐、暫停、調整', async ({ page }) => {
 
 test('手機寬度：首頁與新功能無水平捲動', async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 740 });
-  for (const hash of ['', '#breath', '#tiny']) {
+  for (const hash of ['', '#breath', '#tiny', '#sounds', '#mood', '#jar', '#ground', '#night']) {
     await page.goto(`/${hash}`);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     expect(overflow).toBeLessThanOrEqual(0);
+    if (shotDir) await page.screenshot({ path: `${shotDir}/mobile-${hash.slice(1) || 'home'}.png`, fullPage: true });
   }
 });
 
@@ -123,4 +124,44 @@ test('在設定選小狗：陪伴屋摸摸會搖尾巴，選擇也帶到萌寵�
   await expect(page.getByRole('img', { name: /小狗/ })).toBeVisible();
   await page.getByRole('button', { name: '設定' }).click();
   await expect(page.getByRole('dialog').getByRole('radio', { name: '小狗' })).toBeChecked();
+});
+
+test('新的地方：療癒聲音、心情小天氣、感謝小罐子、五感著地、睡前模式', async ({ page }) => {
+  if (shotDir) await page.screenshot({ path: `${shotDir}/island-home-10.png`, fullPage: true });
+  await page.getByRole('link', { name: /療癒聲音/ }).click();
+  await expect(page.getByRole('heading', { level: 1, name: '療癒聲音' })).toBeFocused();
+  await page.getByRole('button', { name: /海浪/ }).click();
+  await expect(page.getByRole('button', { name: /海浪/ })).toHaveAttribute('aria-pressed', 'true');
+  if (shotDir) await page.screenshot({ path: `${shotDir}/sounds.png`, fullPage: true });
+  await page.getByRole('button', { name: '停止' }).click();
+
+  await page.goto('/#mood');
+  await expect(page.getByRole('heading', { level: 1, name: '心情小天氣' })).toBeVisible();
+  if (shotDir) await page.screenshot({ path: `${shotDir}/mood-pick.png`, fullPage: true });
+  await page.getByRole('button', { name: /晴時多雲/ }).click();
+  await expect(page.getByText('有陽光，也有雲。兩種都可以同時存在。')).toBeVisible();
+  if (shotDir) await page.screenshot({ path: `${shotDir}/mood-reply.png`, fullPage: true });
+
+  await page.goto('/#jar');
+  await page.getByLabel('今天的小小好事').fill('今天的咖啡很好喝');
+  await page.getByRole('button', { name: '放進罐子' }).click();
+  await page.getByRole('button', { name: '抽一張' }).click();
+  await expect(page.locator('.jar-note__text')).toHaveText('今天的咖啡很好喝');
+  if (shotDir) await page.screenshot({ path: `${shotDir}/jar.png`, fullPage: true });
+  await page.reload();
+  await expect(page.getByText('罐子裡有 1 張紙條')).toBeVisible();
+
+  await page.goto('/#ground');
+  await page.getByRole('button', { name: '開始' }).click();
+  await page.getByRole('button', { name: '找到一個' }).click();
+  await page.getByRole('button', { name: '找到一個' }).click();
+  if (shotDir) await page.screenshot({ path: `${shotDir}/ground.png`, fullPage: true });
+
+  await page.goto('/#night');
+  await expect(page.getByRole('heading', { level: 1, name: '睡前模式' })).toBeVisible();
+  if (shotDir) await page.screenshot({ path: `${shotDir}/night-setup.png`, fullPage: true });
+  await page.getByRole('radio', { name: '安靜' }).check({ force: true });
+  await page.getByRole('button', { name: '開始' }).click();
+  await expect(page.getByText('吸氣')).toBeVisible();
+  if (shotDir) await page.screenshot({ path: `${shotDir}/night-running.png`, fullPage: true });
 });

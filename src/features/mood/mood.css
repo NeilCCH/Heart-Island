@@ -1,0 +1,46 @@
+/* 心情小天氣：天氣只用柔和的顏色區分，沒有好壞色（不用紅綠） */
+:root { --wg-sun: #e0a960; --wg-cloud: #c7d2e2; --wg-cloud-dark: #9aa9c0; --wg-drop: #6f8fc0; --wg-bolt: #d9b25e; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --wg-sun: #e6be82; --wg-cloud: #6d7b98; --wg-cloud-dark: #56627d; --wg-drop: #93afe0; --wg-bolt: #e3c27c; } }
+:root[data-theme="dark"] { --wg-sun: #e6be82; --wg-cloud: #6d7b98; --wg-cloud-dark: #56627d; --wg-drop: #93afe0; --wg-bolt: #e3c27c; }
+.weather-glyph { display: block; flex: none; }
+.wg-sun circle { fill: var(--wg-sun); } .wg-sun path { stroke: var(--wg-sun); stroke-width: 2.2; stroke-linecap: round; }
+.wg-cloud { fill: var(--wg-cloud); } .wg-cloud--dark { fill: var(--wg-cloud-dark); }
+.wg-line, .wg-drop { fill: none; stroke-width: 2.4; stroke-linecap: round; }
+.wg-line { stroke: var(--wg-cloud-dark); } .wg-drop { stroke: var(--wg-drop); }
+.wg-bolt { fill: var(--wg-bolt); }
+
+[data-weather="sunny"] { --hue: #d39a55; } [data-weather="partly"] { --hue: #b39a6a; } [data-weather="cloudy"] { --hue: #7f8ea6; }
+[data-weather="fog"] { --hue: #8c96a8; } [data-weather="rain"] { --hue: #5b78ae; } [data-weather="storm"] { --hue: #6e6aa6; }
+
+.weathers { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.weathers__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.weather {
+  min-height: 104px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  padding: 12px 6px; border-radius: 20px; border: 1px solid var(--card-border); color: var(--text); font: inherit; font-weight: 600; cursor: pointer;
+  background: var(--surface);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--hue) 14%, var(--surface)), var(--surface) 75%);
+  box-shadow: var(--shadow); transition: transform 0.15s ease;
+}
+.weather:active { transform: scale(0.97); }
+.weather:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.weather[aria-pressed="true"] { box-shadow: inset 0 0 0 1.5px var(--hue), var(--shadow); }
+
+.mood-reply {
+  display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;
+  padding: 24px 20px; border-radius: 24px; border: 1px solid var(--card-border); box-shadow: var(--shadow-strong);
+  background: var(--surface);
+  background: linear-gradient(170deg, color-mix(in srgb, var(--hue) 18%, var(--surface)), var(--surface) 70%);
+}
+.mood-reply > * { margin: 0; }
+.mood-reply__name { color: var(--muted); font-weight: 600; }
+.mood-reply__text { font-size: clamp(1.2rem, 5vw, 1.5rem); font-weight: 700; line-height: 1.45; }
+.mood-reply__text:focus { outline: none; }
+.mood-reply .controls { width: 100%; margin-top: 6px; }
+
+.mood-days { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.mood-day { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 0; border-radius: 12px; background: var(--surface-2); }
+.mood-day--today { box-shadow: inset 0 0 0 1.5px var(--progress); }
+.mood-day__empty { width: 26px; height: 26px; display: grid; place-items: center; }
+.mood-day__empty::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--line); }
+.mood-day__date { font-size: 0.75rem; color: var(--muted); }
+.mood-clear { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }

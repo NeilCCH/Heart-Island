@@ -53,10 +53,12 @@
 
 /* 地點卡片：每個地方一個柔和的主色；第一個（呼吸小宇宙）佔滿一行 */
 .places { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-.places > li:first-child { grid-column: 1 / -1; }
-@media (min-width: 720px) { .places { grid-template-columns: repeat(3, minmax(0, 1fr)); } .places > li:first-child { grid-column: span 1; } }
+.places > li:first-child, .places > li:last-child { grid-column: 1 / -1; }
+@media (min-width: 720px) { .places { grid-template-columns: repeat(3, minmax(0, 1fr)); } .places > li:first-child, .places > li:last-child { grid-column: span 1; } }
 [data-place="breath"] { --hue: #5b6fae; } [data-place="tiny"] { --hue: #5f9479; } [data-place="garden"] { --hue: #b08b55; }
 [data-place="energy"] { --hue: #c27c62; } [data-place="companion"] { --hue: #8a78b6; }
+[data-place="sounds"] { --hue: #4f86a8; } [data-place="mood"] { --hue: #b39a6a; } [data-place="jar"] { --hue: #c07a96; }
+[data-place="ground"] { --hue: #5f9479; } [data-place="night"] { --hue: #4a5688; }
 .place {
   height: 100%; display: flex; gap: 12px; align-items: center; min-height: 76px; padding: 14px;
   border-radius: 20px; border: 1px solid var(--card-border); color: var(--text); text-decoration: none;
@@ -64,7 +66,7 @@
   background: linear-gradient(135deg, color-mix(in srgb, var(--hue) 12%, var(--surface)), var(--surface) 70%);
   box-shadow: var(--shadow); transition: transform 0.15s ease, box-shadow 0.2s ease;
 }
-.places > li:not(:first-child) .place { flex-direction: column; align-items: flex-start; }
+.places > li:not(:first-child):not(:last-child) .place { flex-direction: column; align-items: flex-start; }
 a.place:hover { box-shadow: var(--shadow-strong); }
 a.place:active { transform: scale(0.98); }
 .place__glyph { padding: 6px; border-radius: 14px; background: var(--surface-2); background: color-mix(in srgb, var(--hue) 18%, var(--surface)); --glyph: var(--hue); --glyph-soft: color-mix(in srgb, var(--hue) 38%, var(--surface)); }

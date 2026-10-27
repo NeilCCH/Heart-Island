@@ -1,0 +1,38 @@
+/* 感謝小罐子：玻璃罐裡的彩色紙條 */
+:root { --jar-glass-1: rgb(160 186 214 / 0.32); --jar-glass-2: rgb(230 240 250 / 0.5); --jar-edge: rgb(110 140 175 / 0.55); --jar-lid: #b9a283; --jar-lid-top: #a58d6e; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --jar-glass-1: rgb(120 150 200 / 0.2); --jar-glass-2: rgb(170 195 235 / 0.14); --jar-edge: rgb(169 190 224 / 0.45); --jar-lid: #7d6b58; --jar-lid-top: #6a5a49; } }
+:root[data-theme="dark"] { --jar-glass-1: rgb(120 150 200 / 0.2); --jar-glass-2: rgb(170 195 235 / 0.14); --jar-edge: rgb(169 190 224 / 0.45); --jar-lid: #7d6b58; --jar-lid-top: #6a5a49; }
+.jar-stage {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 18px 16px 14px;
+  border-radius: 24px; border: 1px solid var(--card-border); box-shadow: var(--shadow-strong);
+  background: radial-gradient(70% 60% at 50% 45%, var(--bg-glow), transparent 70%), var(--surface);
+}
+.jar-stage > * { margin: 0; }
+.jar-art { width: min(62%, 240px); height: auto; display: block; }
+.jar-glass-1 { stop-color: var(--jar-glass-1); } .jar-glass-2 { stop-color: var(--jar-glass-2); }
+.jar-body { stroke: var(--jar-edge); stroke-width: 2.5; }
+.jar-shine { fill: none; stroke: #fff; stroke-opacity: 0.55; stroke-width: 5; stroke-linecap: round; }
+.jar-lid { fill: var(--jar-lid); } .jar-lid--top { fill: var(--jar-lid-top); }
+.jar-shadow { fill: rgb(20 30 50 / 0.12); }
+.jar-slip rect { stroke: rgb(60 70 90 / 0.12); stroke-width: 1; }
+.jar-slip--drop { animation: jar-drop 0.9s cubic-bezier(0.3, 0.7, 0.4, 1) both; }
+@keyframes jar-drop { from { transform: translateY(var(--from)); opacity: 0; } 30% { opacity: 1; } to { transform: none; } }
+:root[data-motion="reduced"] .jar-slip--drop { animation: none; }
+@media (prefers-reduced-motion: reduce) { .jar-slip--drop { animation: none; } }
+.jar-count { color: var(--muted); font-weight: 600; }
+.jar-note {
+  padding: 22px 20px; border-radius: 6px 22px 22px 22px; text-align: center;
+  background: #fbf3e3; color: #3b3326; border: 1px solid rgb(120 100 60 / 0.15); box-shadow: var(--shadow-strong);
+}
+.jar-note > * { margin: 0; }
+.jar-note .muted { color: #7a6c57; margin-top: 6px; }
+.jar-note:focus { outline: none; } .jar-note:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.jar-note__text { font-size: clamp(1.2rem, 5vw, 1.45rem); font-weight: 700; line-height: 1.45; }
+.jar-add input {
+  flex: 1; min-width: 0; min-height: 44px; padding: 8px 12px; border-radius: 12px;
+  border: 1.5px solid var(--line); background: var(--surface); color: var(--text); font: inherit;
+}
+.jar-ideas summary { cursor: pointer; color: var(--muted); }
+.jar-ideas ul { margin: 6px 0 0; padding-left: 1.2em; color: var(--muted); }
+.jar-list ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.jar-list__text { flex: 1; min-width: 0; padding: 6px 0; overflow-wrap: anywhere; }

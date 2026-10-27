@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 // 以網址 hash 切換功能：不需路由套件，加入主畫面後上一頁也能返回小島。
-export const ROUTES = ['breath', 'tiny', 'garden', 'energy', 'companion'] as const;
+export const ROUTES = ['breath', 'tiny', 'garden', 'energy', 'companion', 'sounds', 'mood', 'jar', 'ground', 'night'] as const;
 export type Route = 'home' | (typeof ROUTES)[number];
 
 function readRoute(): Route {
