@@ -17,7 +17,7 @@
 .night-glow { transform-origin: 300px 560px; transform-box: view-box; transform: scale(0.85); opacity: 0.7; transition: transform 4s ease-in-out, opacity 4s ease-in-out; }
 .night-scene[data-phase="inhale"] .night-glow { transform: scale(1.1); opacity: 1; transition-duration: 4s; }
 .night-scene[data-phase="exhale"] .night-glow { transform: scale(0.85); opacity: 0.6; transition-duration: 6s; }
-.night--still .night-glow { transition: none; }
+.night--still .night-scene .night-glow { transition: none; transform: scale(1); opacity: 0.8; }
 .night-word { margin: 8px 0 0; text-align: center; font-size: 1.3rem; letter-spacing: 0.3em; color: #aab6cf; opacity: 0.8; }
 .night .rig--sleep .rig-breath { animation-duration: 10s; }
 .night--still .rig-breath, .night--still .rig-tail { animation: none !important; }
@@ -27,4 +27,4 @@
 .night-done > * { margin: 0; }
 .night-done__title { font-size: 1.8rem; font-weight: 700; color: #9aa6c0; letter-spacing: 0.2em; }
 .night-done .controls { opacity: 0.6; }
-@media (prefers-reduced-motion: reduce) { .night-glow { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .night-scene .night-glow, .night-scene[data-phase] .night-glow { transition: none; transform: scale(1); opacity: 0.8; } }

@@ -191,6 +191,12 @@ describe('睡前模式', () => {
     expect(stopped).toBeGreaterThan(0);
   });
 
+  it('共用音量為 0 時不發出聲音', () => {
+    render(<NightScreen pet="cat" volume={0} reducedMotion={false} onOpenSettings={() => {}} />);
+    fireEvent.click(screen.getByRole('button', { name: nightCopy.start }));
+    expect(started).toBe(0);
+  });
+
   it('選安靜就不發出聲音；可以提早結束', () => {
     render(<NightScreen pet="cat" volume={0.5} reducedMotion onOpenSettings={() => {}} />);
     fireEvent.click(screen.getByRole('radio', { name: nightCopy.soundOff }));
