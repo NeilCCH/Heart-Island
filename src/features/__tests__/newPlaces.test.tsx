@@ -17,11 +17,11 @@ import { nightCopy } from '../night/copy';
 import { localDate } from '../tiny/storage';
 
 let values: Map<string, string>;
-let started: number; let stopped: number;
+let started: number; let stopped: number; let targets: number[];
 
 // 最小的假 Web Audio：記錄開始與停止了幾個聲音來源。
 function fakeAudio() {
-  const param = () => ({ value: 0, setTargetAtTime() {}, cancelScheduledValues() {} });
+  const param = () => ({ value: 0, setTargetAtTime(v: number) { targets.push(v); }, cancelScheduledValues() {} });
   const node = () => ({ connect() {}, gain: param(), frequency: param(), Q: param(), type: '' });
   const source = () => ({ ...node(), buffer: null, loop: false, loopStart: 0, loopEnd: 0, start() { started++; }, stop() { stopped++; } });
   return class {
@@ -34,7 +34,7 @@ function fakeAudio() {
 }
 
 beforeEach(() => {
-  values = new Map(); started = 0; stopped = 0;
+  values = new Map(); started = 0; stopped = 0; targets = [];
   vi.stubGlobal('localStorage', { getItem: (k: string) => values.get(k) ?? null, setItem: (k: string, v: string) => values.set(k, v), removeItem: (k: string) => values.delete(k), clear: () => values.clear(), get length() { return values.size; } });
   vi.stubGlobal('AudioContext', fakeAudio());
 });
@@ -191,10 +191,12 @@ describe('睡前模式', () => {
     expect(stopped).toBeGreaterThan(0);
   });
 
-  it('共用音量為 0 時不發出聲音', () => {
-    render(<NightScreen pet="cat" volume={0} reducedMotion={false} onOpenSettings={() => {}} />);
+  it('共用音量為 0 時安靜；進行中調高音量就聽得到', () => {
+    const { rerender } = render(<NightScreen pet="cat" volume={0} reducedMotion={false} onOpenSettings={() => {}} />);
     fireEvent.click(screen.getByRole('button', { name: nightCopy.start }));
-    expect(started).toBe(0);
+    expect(Math.max(...targets)).toBeLessThan(0.001);
+    rerender(<NightScreen pet="cat" volume={0.6} reducedMotion={false} onOpenSettings={() => {}} />);
+    expect(targets.at(-1)).toBeCloseTo(0.6 * 0.7 * 0.5);
   });
 
   it('選安靜就不發出聲音；可以提早結束', () => {

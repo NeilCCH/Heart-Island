@@ -49,11 +49,11 @@ export function NightScreen({ pet, volume, reducedMotion, onOpenSettings, now = 
   const phase = useNightBreath(running && guide, now);
   const left = useSleepTimer(minutes, running, () => { scape.stop(30); setStage('done'); }, now);
 
-  // 跟著共用音量：進行中在設定調整音量立即生效；音量 0 就是安靜。
+  // 跟著共用音量：進行中在設定調整音量立即生效；音量 0 就是安靜（聲音仍在，調高就聽得到）。
   useEffect(() => { if (running) scape.setVolume(volume * NIGHT_LEVEL); }, [running, volume, scape]);
 
   const start = () => {
-    if (sound !== 'off' && volume > 0) scape.play(sound, volume * NIGHT_LEVEL);
+    if (sound !== 'off') scape.play(sound, volume * NIGHT_LEVEL);
     setStage('running');
   };
   const end = () => { scape.stop(); setStage('setup'); };
